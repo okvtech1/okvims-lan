@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — OKV IMS LAN Edition | 12-Day Free Trial or ₦120,000 One-Time</title>
+<meta name="description" content="Try OKV IMS LAN Edition free for 12 days, or buy it once for ₦120,000 — no monthly fees, ever.">
+<link href="vendor/bootstrap.min.css" rel="stylesheet">
+<style>
+.ico{width:1em;height:1em;display:inline-block;vertical-align:-0.125em;flex-shrink:0;}.ico-wrap{display:inline-block;line-height:0;vertical-align:-0.125em;}
+:root{
+  --forest:#16342A; --forest-deep:#0E241C; --brass:#C99A3E; --brass-deep:#8A6414;
+  --parchment:#F7F2E7; --paper:#FFFDF8; --ink:#1C1F1B; --ink-soft:#56523F;
+  --line:#DCD3BC; --ok:#3F7A4E;
+}
+*{box-sizing:border-box;}
+body{ font-family:'Inter',sans-serif; color:var(--ink); background:var(--parchment); font-size:16px; line-height:1.6; }
+h1,h2,h3,h4{ font-family:'Fraunces',serif; color:var(--ink); letter-spacing:-.01em; }
+.container-narrow{ max-width:1120px; margin:0 auto; padding-left:20px; padding-right:20px; }
+a{ color:inherit; }
+.btn{ border-radius:8px; font-weight:600; padding:.65rem 1.4rem; }
+.btn-brass{ background:var(--brass); border-color:var(--brass); color:#1C1F1B; }
+.btn-brass:hover{ background:var(--brass-deep); border-color:var(--brass-deep); color:#fff; }
+.btn-outline-forest{ border:1.5px solid var(--forest); color:var(--forest); background:transparent; }
+.btn-outline-forest:hover{ background:var(--forest); color:#fff; }
+.site-header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
+.brand-mark{ font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem; display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); }
+.brand-mark .chip{ width:34px;height:34px;border-radius:8px;background:var(--forest);color:var(--brass);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700; }
+.site-header .nav-link{ color:var(--ink-soft); font-weight:500; font-size:.94rem; }
+.site-header .nav-link:hover,.site-header .nav-link.active{ color:var(--forest); }
+
+.page-hero{ padding:60px 0 20px; text-align:center; }
+.page-hero h1{ font-size:clamp(1.9rem,3.6vw,2.6rem); }
+.page-hero p{ color:var(--ink-soft); max-width:560px; margin:14px auto 0; }
+
+.pricing-wrap{ padding:40px 0 80px; }
+.price-card{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:34px 30px; height:100%; position:relative; }
+.price-card.featured{ background:var(--forest); color:var(--parchment); border-color:var(--forest); box-shadow:0 30px 60px rgba(22,52,42,.25); }
+.price-card .plan-name{ font-family:'Fraunces',serif; font-size:1.3rem; }
+.price-card .plan-price{ font-family:'Fraunces',serif; font-size:2.6rem; margin:10px 0 2px; }
+.price-card .plan-sub{ font-size:.85rem; opacity:.75; }
+.price-card ul{ list-style:none; padding:0; margin:22px 0; }
+.price-card ul li{ display:flex; gap:10px; padding:7px 0; font-size:.92rem; }
+.price-card.featured ul li{ color:#E6EADF; }
+.price-card:not(.featured) ul li{ color:var(--ink-soft); }
+.badge-pop{ position:absolute; top:-13px; right:28px; background:var(--brass); color:var(--forest-deep); font-size:.72rem; font-weight:700; padding:5px 14px; border-radius:20px; }
+
+.compare-table{ width:100%; border-collapse:collapse; font-size:.9rem; margin-top:50px;}
+.compare-table th{ background:var(--forest); color:var(--parchment); padding:10px 14px; text-align:left; font-family:'Inter',sans-serif; }
+.compare-table td{ padding:9px 14px; border-bottom:1px solid var(--line); }
+.compare-table tr:nth-child(even) td{ background:var(--paper); }
+
+.modal-content{ border-radius:14px; border:none; }
+.form-label{ font-size:.85rem; font-weight:600; color:var(--ink-soft); }
+.form-control{ border-radius:8px; border-color:var(--line); }
+.form-control:focus{ border-color:var(--brass); box-shadow:0 0 0 .2rem rgba(201,154,62,.18); }
+body{padding-bottom:110px;}   /* keeps the fixed cookie notice from covering the last buttons */
+
+.row.g-5{--bs-gutter-x:2rem;}
+@media (max-width:575.98px){ .row{--bs-gutter-x:1rem;} }
+</style>
+</head>
+<body><header class="site-header">
+  <div class="container-narrow d-flex align-items-center justify-content-between" style="height:72px;">
+    <a href="index.html" class="brand-mark"><span class="chip">OKV</span> IMS <span style="color:var(--brass-deep);font-weight:500;font-size:.78em;">LAN Edition</span></a>
+    <nav class="d-none d-md-flex align-items-center gap-4">
+      <a class="nav-link" href="index.html#about">About</a>
+      <a class="nav-link" href="index.html#how">How it works</a>
+      <a class="nav-link" href="index.html#features">Features</a>
+      <a class="nav-link" href="index.html#faq">FAQ</a>
+      <a class="nav-link active" href="pricing.html">Pricing</a>
+    </nav>
+    <div class="d-flex align-items-center gap-2">
+      <a href="demo.html" class="btn btn-outline-forest btn-sm d-none d-sm-inline-block">View Live Demo</a>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container-narrow">
+    <h1>Simple pricing. No subscriptions.</h1>
+    <p>Try everything free for 12 days. When you're ready, pay once — <span id="heroPrice">₦120,000</span> — and the system is yours for good.</p>
+  </div>
+</section>
+
+<section class="pricing-wrap">
+  <div class="container-narrow">
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-5" id="trial">
+        <div class="price-card">
+          <div class="plan-name">12-Day Free Trial</div>
+          <div class="plan-price">₦0</div>
+          <div class="plan-sub">Full access, every module, no card required</div>
+          <ul>
+            <li><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> All 20 modules unlocked</li>
+            <li><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Unlimited staff logins during trial</li>
+            <li><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Your data carries over if you activate</li>
+            <li><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> No card, no auto-charge, ever</li>
+          </ul>
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-forest" onclick="chooseDownload('windows')"><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/></svg></i> Download for Windows</button>
+            <button class="btn btn-outline-forest" onclick="chooseDownload('mac')"><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M16.5 12.8c0-2.4 2-3.5 2.1-3.6-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9C6 7.2 4.4 8.2 3.5 9.7c-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.5 0 2 .8 3.3.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM14.1 5.3c.7-.9 1.2-2 1-3.3-1 0-2.2.7-2.9 1.6-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.5 2.9-1.4z"/></svg></i> Download for Mac</button>
+          </div>
+          <div class="small text-center mt-2" style="opacity:.8;">Windows 7 to 11, 32-bit and 64-bit &middot; macOS 11 or later</div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="price-card featured">
+          <span class="badge-pop">Most businesses choose this</span>
+          <div class="plan-name">One-Time License</div>
+          <div class="plan-price" id="planPrice">₦120,000</div>
+          <div class="plan-sub">Pay once. No renewals, no monthly fees.</div>
+          <ul>
+            <li><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Everything in the free trial, permanently</li>
+            <li><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Unlimited devices on your network</li>
+            <li><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Free updates to this edition</li>
+            <li><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Direct support from OKV Technology</li>
+            <li><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> 30-day money-back guarantee</li>
+          </ul>
+          <div class="d-grid gap-2">
+            <button class="btn btn-brass" onclick="chooseDownload('windows')"><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/></svg></i> Download for Windows</button>
+            <button class="btn btn-brass" onclick="chooseDownload('mac')"><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M16.5 12.8c0-2.4 2-3.5 2.1-3.6-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9C6 7.2 4.4 8.2 3.5 9.7c-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.5 0 2 .8 3.3.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM14.1 5.3c.7-.9 1.2-2 1-3.3-1 0-2.2.7-2.9 1.6-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.5 2.9-1.4z"/></svg></i> Download for Mac</button>
+          </div>
+          <div style="font-size:.78rem;text-align:center;margin-top:10px;opacity:.75;">Download &amp; trial first — activate whenever you're ready, right from the Admin dashboard.</div>
+        </div>
+      </div>
+    </div>
+
+    <table class="compare-table">
+      <tr><th>What's included</th><th>12-Day Trial</th><th>One-Time License</th></tr>
+      <tr><td>All 20 modules (POS, Stock, Orders, Reports, Team &amp; more)</td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Unlimited devices on your network</td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Works fully offline</td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Use beyond 12 days</td><td>—</td><td><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Direct support from OKV Technology</td><td>Email only</td><td>Phone, WhatsApp &amp; email</td></tr>
+      <tr><td>Price</td><td>₦0</td><td id="comparePrice">₦120,000 once</td></tr>
+    </table>
+
+    <div class="card" style="margin-top:50px;max-width:640px;margin-left:auto;margin-right:auto;text-align:center;background:var(--paper);border:1px dashed var(--brass-deep);">
+      <h3 style="font-size:1.1rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-3 3-5-5-5 5-3-3 5-5a4 4 0 0 0 1.7-7.7z"/></svg></i> Want us to install it for you?</h3>
+      <p style="color:var(--ink-soft);font-size:.92rem;">OKV Technology Consults offers a paid installation service — setup, data import, device connection, and staff training, done for you. Ask about pricing when you reach out.</p>
+      <a href="mailto:technologyokv@gmail.com?subject=Installation%20Service%20Enquiry" class="btn btn-outline-forest btn-sm">Email Us About Installation</a>
+    </div>
+
+    <!-- ============ ACTIVATE YOUR LICENSE ============ -->
+    <div id="activate" class="card" style="margin-top:28px;max-width:640px;margin-left:auto;margin-right:auto;text-align:center;background:var(--forest);color:var(--parchment);border:none;">
+      <h3 style="font-size:1.1rem;color:#fff;"><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg></i> Already using OKV IMS? Activate your license</h3>
+      <p style="color:#DCE3D6;font-size:.92rem;">Already paid, or ready to? Submit your payment proof here and we'll email your activation code and licence key and licence key — usually within 24 hours.</p>
+      <button class="btn btn-brass" data-bs-toggle="modal" data-bs-target="#activateModal">Submit Payment Proof</button>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--ink);color:#C9D3C1;padding:40px 0 22px;font-size:.88rem;text-align:center;">
+  <div class="container-narrow">
+    <div class="brand-mark" style="color:#fff;justify-content:center;"><span class="chip">OKV</span> IMS LAN Edition</div>
+    <p style="margin-top:14px;color:#9CA596;">technologyokv@gmail.com · +234 915 210 3969 (call) · +234 810 414 1138 (WhatsApp) · www.okvtechnology.com</p>
+    <div style="color:#7E8777;font-size:.8rem;margin-top:10px;">© 2026 OKV Technology Consults. All rights reserved. · <a href="privacy-policy.html" style="color:#7E8777;">Privacy</a> · <a href="terms.html" style="color:#7E8777;">Terms</a> · <a href="cookie-policy.html" style="color:#7E8777;">Cookies</a></div>
+  </div>
+</footer>
+
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:#DCE3D6;padding:14px 20px;z-index:999;font-size:.85rem;">
+  <div class="container-narrow d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <span>We use only essential cookies to remember your preferences — no tracking or ads. <a href="cookie-policy.html" style="color:var(--brass);">Learn more</a></span>
+    <button class="btn btn-brass btn-sm" onclick="localStorage.setItem('okv_cookie_consent','1');document.getElementById('cookieBanner').style.display='none';">Got it</button>
+  </div>
+</div>
+<script>if(!localStorage.getItem('okv_cookie_consent')) document.getElementById('cookieBanner').style.display='block';</script>
+
+<!-- ============ ACTIVATE / PAYMENT PROOF MODAL ============ -->
+<div class="modal fade" id="activateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content p-2">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" style="font-family:'Fraunces',serif;">Activate Your License</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="activateModalBody">
+        <div id="bankDetailsBox" class="mb-3 p-3" style="background:var(--parchment);border-radius:10px;font-size:.88rem;">
+          <strong>Bank Transfer Details</strong>
+          <div class="row mt-1">
+            <div class="col-4"><div style="font-size:.7rem;color:var(--ink-soft);">ACCOUNT NO.</div><div id="bankAccNo" style="font-weight:700;">8104141138</div></div>
+            <div class="col-4"><div style="font-size:.7rem;color:var(--ink-soft);">BANK</div><div id="bankName" style="font-weight:700;">OPA MFB</div></div>
+            <div class="col-4"><div style="font-size:.7rem;color:var(--ink-soft);">NAME</div><div id="bankAccName" style="font-weight:700;">OLASILE K. VICTOR</div></div>
+          </div>
+        </div>
+        <form id="activateForm">
+          <div class="mb-2"><label class="form-label">Business Name</label><input class="form-control" id="af_business" required></div>
+          <div class="mb-2"><label class="form-label">Email (your code will be sent here)</label><input type="email" class="form-control" id="af_email" required></div>
+          <div class="mb-2"><label class="form-label">Phone (WhatsApp preferred)</label><input class="form-control" id="af_phone" required></div>
+          <div class="row">
+            <div class="col-6 mb-2"><label class="form-label">Amount Paid</label><input type="number" class="form-control" id="af_amount" value="120000"></div>
+            <div class="col-6 mb-2"><label class="form-label">Payment Reference</label><input class="form-control" id="af_ref"></div>
+          </div>
+          <div class="mb-2"><label class="form-label">Payment Screenshot</label><input type="file" class="form-control" id="af_receipt" accept="image/*,.pdf"></div>
+          <div id="activateFormError" style="color:#B13B3B;font-size:.85rem;min-height:18px;"></div>
+          <button type="submit" class="btn btn-brass w-100 mt-2">Submit for Review</button>
+          <p class="text-center mt-2" style="font-size:.76rem;color:var(--ink-soft);">Already have a code? Enter it on your Admin dashboard's Activate page — no need to submit again.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DOWNLOAD / LEAD FORM MODAL ============ -->
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-2">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" style="font-family:'Fraunces',serif;">Almost there</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="downloadModalBody">
+        <p style="color:var(--ink-soft);font-size:.92rem;">Tell us where to reach you, and your download will start right after.</p>
+        <form id="downloadForm">
+          <div class="mb-3"><label class="form-label">Full Name</label><input class="form-control" id="df_name" required></div>
+          <div class="mb-3"><label class="form-label">Business Name</label><input class="form-control" id="df_business" required></div>
+          <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="df_email" required></div>
+          <div class="mb-3"><label class="form-label">Phone (WhatsApp preferred)</label><input class="form-control" id="df_phone" required></div>
+          <div id="downloadFormError" style="color:#B13B3B;font-size:.85rem;min-height:18px;"></div>
+          <button type="submit" class="btn btn-brass w-100 mt-2">Start My Download</button>
+          <p class="text-center mt-2" style="font-size:.76rem;color:var(--ink-soft);">We'll also email you the link, in case the download doesn't start automatically.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="vendor/bootstrap.bundle.min.js"></script>
+<script>
+/* Paste your deployed Apps Script Web App URL here once the licensing
+   backend (Code.gs) is deployed — see README for deployment steps. */
+const LICENSING_API_URL = 'https://script.google.com/macros/s/AKfycby8Hla-F54xQ4-r-NRyVFvbu65J4_ppIPXoo8nlaEZXoMUjLBIDgKCexRnJA5v_mMIwPQ/exec';
+/* Where the actual setup ZIP is hosted — a direct-download link (e.g. a
+   "anyone with the link can view" Google Drive file, or your own host). */
+const DOWNLOAD_LINKS = {
+  windows: 'PASTE_YOUR_WINDOWS_INSTALLER_LINK_HERE',   // e.g. OKV-IMS-LAN-Setup-x64.exe
+  mac:     'PASTE_YOUR_MAC_INSTALLER_LINK_HERE',       // e.g. OKV-IMS-LAN-Mac.zip
+};
+let PENDING_PLATFORM = null;
+function chooseDownload(platform){
+  PENDING_PLATFORM = platform;
+  const label = platform === 'mac' ? 'Mac' : 'Windows';
+  document.querySelector('#downloadModal .modal-title').textContent = 'Download for ' + label;
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('downloadModal')).show();
+}
+function linkReady(url){ return url && url.indexOf('PASTE_YOUR') !== 0; }
+
+document.getElementById('downloadForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const errEl = document.getElementById('downloadFormError');
+  const btn = e.target.querySelector('button[type="submit"]');
+  errEl.textContent = '';
+  const payload = {
+    action: 'submitTrialDownload',
+    source: 'landing_page',
+    name: document.getElementById('df_name').value,
+    businessName: document.getElementById('df_business').value,
+    email: document.getElementById('df_email').value,
+    phone: document.getElementById('df_phone').value,
+    submittedAt: new Date().toISOString(),
+  };
+  if(LICENSING_API_URL.indexOf('PASTE_YOUR') === 0){
+    errEl.textContent = 'Download link is being set up — please email technologyokv@gmail.com for your copy in the meantime.';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Starting your download…';
+  try{
+    await fetch(LICENSING_API_URL, {
+      method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload)
+    });
+  }catch(err){
+    // Even if the lead-logging call fails, don't block a genuine prospect
+    // from getting the software — just proceed to the download.
+  }
+  document.getElementById('downloadModalBody').innerHTML =
+    '<div class="text-center py-3"><i class="ico-wrap" style="font-size:2.4rem;color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i>' +
+    '<h5 class="mt-3" style="font-family:\'Fraunces\',serif;">Your download is starting</h5>' +
+    '<p style="color:var(--ink-soft);font-size:.9rem;">If it doesn\'t start automatically, <a href="'+(DOWNLOAD_LINKS[PENDING_PLATFORM||'windows'])+'">click here</a>. We\'ve also emailed the link to you.</p>' +
+    '<a href="'+(DOWNLOAD_LINKS[PENDING_PLATFORM||'windows'])+'" class="btn btn-brass mt-2">Download Now</a></div>';
+  const url = DOWNLOAD_LINKS[PENDING_PLATFORM || 'windows'];
+  if(linkReady(url)){ window.location.href = url; }
+});
+
+/* ============ Live pricing & bank details ============
+   Pulls from the licensing backend's system config (set from the OKV
+   Technology admin dashboard's "Pricing & Payment Settings" tab) so a
+   price or bank-account change there shows up here immediately — no need
+   to edit this page by hand. Falls back to the defaults already in the
+   HTML above if the backend isn't connected yet. */
+async function loadLiveConfig(){
+  if(LICENSING_API_URL.indexOf('PASTE_YOUR') === 0) return;
+  try{
+    const res = await fetch(LICENSING_API_URL, {
+      method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'getPublicLicensingConfig'}),
+    });
+    const d = await res.json();
+    if(!d.ok) return;
+    const priceFmt = n => 'NGN ' + Number(n||120000).toLocaleString();
+    if(d.starterPriceNgn){
+      document.getElementById('heroPrice').textContent = priceFmt(d.starterPriceNgn);
+      document.getElementById('planPrice').textContent = priceFmt(d.starterPriceNgn);
+      document.getElementById('comparePrice').textContent = priceFmt(d.starterPriceNgn) + ' once';
+      document.getElementById('af_amount').value = d.starterPriceNgn;
+    }
+    if(d.bankAccountNumber) document.getElementById('bankAccNo').textContent = d.bankAccountNumber;
+    if(d.bankName) document.getElementById('bankName').textContent = d.bankName;
+    if(d.bankAccountName) document.getElementById('bankAccName').textContent = d.bankAccountName;
+    // Manual-only mode is the only one actually wired up end-to-end right
+    // now — if Paystack is ever switched on and fully integrated, this is
+    // the hook point to swap the bank-details box for a Paystack button.
+  }catch(e){ /* page still works fine with the static defaults above */ }
+}
+loadLiveConfig();
+
+/* ============ Activate / payment-proof submission ============ */
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=>resolve(r.result.split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+document.getElementById('activateForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const errEl = document.getElementById('activateFormError');
+  const btn = e.target.querySelector('button[type="submit"]');
+  errEl.textContent = '';
+  if(LICENSING_API_URL.indexOf('PASTE_YOUR') === 0){
+    errEl.textContent = 'This form isn\'t connected yet — please email your payment proof directly to technologyokv@gmail.com in the meantime.';
+    return;
+  }
+  const fileEl = document.getElementById('af_receipt');
+  let receiptBase64 = '', receiptFilename = '';
+  if(fileEl.files[0]){
+    if(fileEl.files[0].size > 5*1024*1024){ errEl.textContent = 'Please keep the screenshot under 5MB.'; return; }
+    receiptBase64 = await fileToBase64(fileEl.files[0]);
+    receiptFilename = fileEl.files[0].name;
+  }
+  const payload = {
+    action: 'submitActivationRequest',
+    source: 'pricing_page',
+    businessName: document.getElementById('af_business').value,
+    email: document.getElementById('af_email').value,
+    phone: document.getElementById('af_phone').value,
+    amountPaid: document.getElementById('af_amount').value,
+    paymentReference: document.getElementById('af_ref').value,
+    receiptBase64, receiptFilename,
+    submittedAt: new Date().toISOString(),
+  };
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try{
+    const res = await fetch(LICENSING_API_URL, {
+      method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    if(!d.ok) throw new Error(d.error || 'Something went wrong.');
+    document.getElementById('activateModalBody').innerHTML =
+      '<div class="text-center py-3"><i class="ico-wrap" style="font-size:2.4rem;color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i>' +
+      '<h5 class="mt-3" style="font-family:\'Fraunces\',serif;">Submitted — thank you</h5>' +
+      '<p style="color:var(--ink-soft);font-size:.9rem;">We\'ll review it and email your activation code and licence key, usually within 24 hours. Check your spam folder if you don\'t see it.</p></div>';
+  }catch(err){
+    btn.disabled = false; btn.textContent = 'Submit for Review';
+    errEl.textContent = err.message || 'Could not submit — please check your connection and try again.';
+  }
+});
+</script>
+</body>
+</html>

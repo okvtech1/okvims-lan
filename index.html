@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKV IMS — LAN Edition | Offline Inventory Software, Pay Once</title>
+<meta name="description" content="Inventory, sales and stock management that runs entirely on your own network — no internet, no monthly fees. One payment, yours forever.">
+<link href="vendor/bootstrap.min.css" rel="stylesheet">
+<style>
+.dot{display:inline-block;width:.55em;height:.55em;border-radius:50%;background:currentColor;vertical-align:middle;margin-right:.35em;}
+.ico{width:1em;height:1em;display:inline-block;vertical-align:-0.125em;flex-shrink:0;}.ico-wrap{display:inline-block;line-height:0;vertical-align:-0.125em;}
+:root{
+  --forest:#16342A; --forest-deep:#0E241C; --brass:#C99A3E; --brass-deep:#8A6414;
+  --parchment:#F7F2E7; --paper:#FFFDF8; --ink:#1C1F1B; --ink-soft:#56523F;
+  --line:#DCD3BC; --ok:#3F7A4E;
+}
+*{box-sizing:border-box;}
+body{
+  font-family:'Inter',sans-serif; color:var(--ink); background:var(--parchment);
+  font-size:16px; line-height:1.6;
+}
+h1,h2,h3,h4,.display-serif{ font-family:'Fraunces',serif; color:var(--ink); letter-spacing:-.01em; }
+.container-narrow{ max-width:1120px; margin:0 auto; padding-left:20px; padding-right:20px; }
+a{ color:inherit; }
+.btn{ border-radius:8px; font-weight:600; padding:.65rem 1.4rem; }
+.btn-brass{ background:var(--brass); border-color:var(--brass); color:#1C1F1B; }
+.btn-brass:hover{ background:var(--brass-deep); border-color:var(--brass-deep); color:#fff; }
+.btn-outline-parchment{ border:1.5px solid rgba(247,242,231,.55); color:var(--parchment); }
+.btn-outline-parchment:hover{ background:rgba(247,242,231,.12); color:#fff; border-color:#fff; }
+.btn-outline-forest{ border:1.5px solid var(--forest); color:var(--forest); background:transparent; }
+.btn-outline-forest:hover{ background:var(--forest); color:#fff; }
+hr.rule{ border:none; border-top:1px solid var(--line); margin:0; }
+
+/* ---------- Header ---------- */
+.site-header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50; }
+.brand-mark{ font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem; display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); }
+.brand-mark .chip{ width:34px;height:34px;border-radius:8px;background:var(--forest);color:var(--brass);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700; }
+.site-header .nav-link{ color:var(--ink-soft); font-weight:500; font-size:.94rem; }
+.site-header .nav-link:hover, .site-header .nav-link.active{ color:var(--forest); }
+
+/* ---------- Hero ---------- */
+.hero{ background:linear-gradient(165deg, var(--forest-deep) 0%, var(--forest) 58%, #3C5C2E 100%); color:var(--parchment); padding:84px 0 70px; position:relative; overflow:hidden; }
+.hero .eyebrow{ font-size:.82rem; color:var(--brass); font-weight:600; margin-bottom:14px; display:inline-flex; align-items:center; gap:8px; }
+.hero h1{ font-size:clamp(2.1rem, 4vw, 3.1rem); color:#fff; line-height:1.15; max-width:620px; }
+.hero p.lead-text{ color:#DCE3D6; font-size:1.08rem; max-width:480px; margin-top:16px; }
+.hero .hero-actions{ margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; }
+.hero .trust-row{ margin-top:34px; display:flex; gap:26px; flex-wrap:wrap; font-size:.84rem; color:#C9D3C1; }
+.hero .trust-row span{ display:flex; align-items:center; gap:7px; }
+
+/* Receipt/ledger mock card in hero */
+.ledger-card{ background:var(--paper); border-radius:14px; padding:22px 24px; box-shadow:0 30px 60px rgba(0,0,0,.35); font-family:'Inter',sans-serif; transform:rotate(1.2deg); }
+.ledger-card .lc-head{ display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:12px; }
+.ledger-card .lc-head b{ font-family:'Fraunces',serif; color:var(--ink); }
+.ledger-card .lc-row{ display:flex; justify-content:space-between; font-size:.85rem; padding:7px 0; border-bottom:1px dashed var(--line); color:var(--ink-soft); }
+.ledger-card .lc-row b{ color:var(--ink); font-weight:600; }
+.ledger-card .lc-total{ display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1.5px solid var(--ink); font-weight:700; }
+.ledger-card .lc-badge{ display:inline-block; background:#EAF2EA; color:var(--ok); font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:20px; margin-top:12px; }
+
+/* ---------- Guarantee strip ---------- */
+.guarantee-strip{ background:var(--brass); color:var(--forest-deep); font-weight:600; font-size:.92rem; padding:13px 0; }
+.guarantee-strip .container-narrow{ display:flex; justify-content:center; gap:40px; flex-wrap:wrap; text-align:center; }
+.guarantee-strip span{ display:inline-flex; align-items:center; gap:8px; }
+
+/* ---------- Section rhythm ---------- */
+.section{ padding:84px 0; }
+.section-head{ max-width:640px; margin-bottom:46px; }
+.section-head .kicker{ color:var(--brass-deep); font-weight:700; font-size:.82rem; margin-bottom:10px; }
+.section-head h2{ font-size:clamp(1.7rem,3vw,2.3rem); }
+.section-head p{ color:var(--ink-soft); margin-top:10px; font-size:1.02rem; }
+.section-alt{ background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+
+.row.g-5{--bs-gutter-x:2rem;}
+@media (max-width:575.98px){ .row{--bs-gutter-x:1rem;} }
+</style>
+</head>
+<body><header class="site-header">
+  <div class="container-narrow d-flex align-items-center justify-content-between" style="height:72px;">
+    <a href="index.html" class="brand-mark"><span class="chip">OKV</span> IMS <span style="color:var(--brass-deep);font-weight:500;font-size:.78em;">LAN Edition</span></a>
+    <nav class="d-none d-md-flex align-items-center gap-4">
+      <a class="nav-link active" href="#about">About</a>
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#features">Features</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+      <a class="nav-link" href="pricing.html">Pricing</a>
+    </nav>
+    <div class="d-flex align-items-center gap-2">
+      <a href="demo.html" class="btn btn-outline-forest btn-sm d-none d-sm-inline-block">View Live Demo</a>
+      <a href="pricing.html" class="btn btn-brass btn-sm">Get Started</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container-narrow">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="eyebrow"><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.7 11a10 10 0 0 1 4.6 2.9M5 12.6A10 10 0 0 1 9.3 9.9M10.7 5.1A16 16 0 0 1 22 9.3M2 8.8a16 16 0 0 1 4.2-2.6M8.5 16.4a5 5 0 0 1 4.6-1.5"/><line x1="12" y1="20" x2="12" y2="20"/></svg></i> Built for no-internet, no-subscription operation</div>
+        <h1>Run your shop's stock and sales without ever touching the internet.</h1>
+        <p class="lead-text">OKV IMS LAN Edition lives entirely on your own computer and local network. Every till, every stockroom tablet, every staff login — connected to each other, never to the cloud. Pay once. Use it for as long as you're in business.</p>
+        <div class="hero-actions">
+          <a href="pricing.html#trial" class="btn btn-brass btn-lg">Download Free 12-Day Trial</a>
+          <a href="demo.html" class="btn btn-outline-parchment btn-lg"><i class="ico-wrap me-1"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg></i> View Live Demo</a>
+        </div>
+        <div class="trust-row">
+          <span><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> No card required for trial</span>
+          <span><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> ₦120,000 one-time — no renewals</span>
+          <span><i class="ico-wrap" style="color:var(--brass);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Works fully offline, always</span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="ledger-card">
+          <div class="lc-head"><b>Today's Summary</b><span style="font-size:.78rem;color:var(--ink-soft);">Offline · Synced to this device only</span></div>
+          <div class="lc-row"><span>Sales recorded</span><b>₦482,600</b></div>
+          <div class="lc-row"><span>Products tracked</span><b>316</b></div>
+          <div class="lc-row"><span>Staff signed in</span><b>4 of 4</b></div>
+          <div class="lc-row"><span>Network status</span><b style="color:var(--ok);"><span class="dot"></span>Local Wi-Fi only</b></div>
+          <div class="lc-total"><span>Net profit (today)</span><span>₦118,250</span></div>
+          <span class="lc-badge"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> No internet used today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="guarantee-strip">
+  <div class="container-narrow">
+    <span><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></i> 30-day money-back guarantee</span>
+    <span><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.2 12c2.1-2.3 4.1-3.5 5.8-3.5a3.7 3.7 0 0 1 0 7.5c-1.7 0-3.7-1.2-5.8-3.5-2.1 2.3-4.1 3.5-5.8 3.5a3.7 3.7 0 0 1 0-7.5c1.7 0 3.7 1.2 5.8 3.5z"/></svg></i> Pay once — no monthly fees, ever</span>
+    <span><i class="ico-wrap"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-4h14v4"/></svg></i> Unlimited devices on your own network</span>
+  </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="container-narrow">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5">
+        <div class="section-head" style="margin-bottom:0;">
+          <div class="kicker">About the system</div>
+          <h2>One record book for everything moving through your business — kept on your own machine.</h2>
+          <p>OKV IMS LAN Edition replaces exercise books, scattered spreadsheets, and software that stops working the moment your data bundle runs out. Every sale, every delivery, every stock count writes to one local database the moment it happens — readable instantly by every till and every device on your network.</p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="row g-4">
+          <div class="col-sm-6">
+            <h3 style="font-size:1.1rem;"><i class="ico-wrap text-dark" style="color:var(--brass-deep) !important;"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="6" cy="16" r="1"/></svg></i> Runs on hardware you already own</h3>
+            <p style="color:var(--ink-soft);font-size:.95rem;">One ordinary Windows computer is the server. No special hardware, no IT contractor, no cloud account.</p>
+          </div>
+          <div class="col-sm-6">
+            <h3 style="font-size:1.1rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></i> Built for a whole team</h3>
+            <p style="color:var(--ink-soft);font-size:.95rem;">Cashiers, storekeepers, managers — each with their own login and exactly the access their role needs.</p>
+          </div>
+          <div class="col-sm-6">
+            <h3 style="font-size:1.1rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></i> Real numbers, not guesses</h3>
+            <p style="color:var(--ink-soft);font-size:.95rem;">Profit and loss, reorder alerts, and sales reports calculated live from what's actually happened.</p>
+          </div>
+          <div class="col-sm-6">
+            <h3 style="font-size:1.1rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i> Your data never leaves your building</h3>
+            <p style="color:var(--ink-soft);font-size:.95rem;">Nothing is uploaded anywhere. Back it up to a USB drive whenever you choose to.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section section-alt" id="how">
+  <div class="container-narrow">
+    <div class="section-head">
+      <div class="kicker">How it works</div>
+      <h2>From download to your first sale, in one afternoon.</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div style="font-family:'Fraunces',serif;font-size:2.2rem;color:var(--brass-deep);line-height:1;">01</div>
+        <h3 style="font-size:1.05rem;margin-top:10px;">Download &amp; install</h3>
+        <p style="color:var(--ink-soft);font-size:.92rem;">Run the setup file on one computer — the one that'll act as your server. Takes a few minutes.</p>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div style="font-family:'Fraunces',serif;font-size:2.2rem;color:var(--brass-deep);line-height:1;">02</div>
+        <h3 style="font-size:1.05rem;margin-top:10px;">Set up your shop</h3>
+        <p style="color:var(--ink-soft);font-size:.92rem;">Add your products, suppliers and customers — or import them from a spreadsheet in seconds.</p>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div style="font-family:'Fraunces',serif;font-size:2.2rem;color:var(--brass-deep);line-height:1;">03</div>
+        <h3 style="font-size:1.05rem;margin-top:10px;">Connect your team</h3>
+        <p style="color:var(--ink-soft);font-size:.92rem;">Open a browser on any other computer, tablet or phone on the same Wi-Fi and log in.</p>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div style="font-family:'Fraunces',serif;font-size:2.2rem;color:var(--brass-deep);line-height:1;">04</div>
+        <h3 style="font-size:1.05rem;margin-top:10px;">Run your day, offline</h3>
+        <p style="color:var(--ink-soft);font-size:.92rem;">Ring up sales, receive stock, check reports — with or without an internet connection.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DEVICES / CROSS-PLATFORM ============ -->
+<section class="section" id="devices">
+  <div class="container-narrow">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <div class="section-head" style="margin-bottom:0;">
+          <div class="kicker">Devices</div>
+          <h2>One server. Every screen in the building.</h2>
+          <p>Install once on your main computer. Every other device just opens a web browser and connects over your existing Wi-Fi or network cable — no app installs, no per-device licenses, no limit on how many can connect.</p>
+        </div>
+        <div class="d-flex gap-4 flex-wrap mt-4">
+          <span class="d-flex align-items-center gap-2" style="font-weight:600;"><i class="ico-wrap" style="font-size:1.4rem;color:var(--forest);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></i> Desktop</span>
+          <span class="d-flex align-items-center gap-2" style="font-weight:600;"><i class="ico-wrap" style="font-size:1.4rem;color:var(--forest);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg></i> Tablet</span>
+          <span class="d-flex align-items-center gap-2" style="font-weight:600;"><i class="ico-wrap" style="font-size:1.4rem;color:var(--forest);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg></i> Phone</span>
+          <span class="d-flex align-items-center gap-2" style="font-weight:600;"><i class="ico-wrap" style="font-size:1.4rem;color:var(--forest);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M1 20h22"/></svg></i> Laptop</span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <svg viewBox="0 0 440 260" style="width:100%;max-width:440px;display:block;margin:0 auto;">
+          <rect x="178" y="18" width="84" height="60" rx="8" fill="#16342A"/>
+          <text x="220" y="52" text-anchor="middle" fill="#F7F2E7" font-family="Inter,sans-serif" font-size="11" font-weight="600">SERVER</text>
+          <line x1="220" y1="78" x2="70" y2="170" stroke="#C99A3E" stroke-width="2" stroke-dasharray="4 4"/>
+          <line x1="220" y1="78" x2="220" y2="170" stroke="#C99A3E" stroke-width="2" stroke-dasharray="4 4"/>
+          <line x1="220" y1="78" x2="370" y2="170" stroke="#C99A3E" stroke-width="2" stroke-dasharray="4 4"/>
+          <rect x="34" y="170" width="72" height="50" rx="6" fill="#FFFDF8" stroke="#DCD3BC"/>
+          <text x="70" y="200" text-anchor="middle" fill="#56523F" font-family="Inter,sans-serif" font-size="10">Till</text>
+          <rect x="184" y="170" width="72" height="50" rx="6" fill="#FFFDF8" stroke="#DCD3BC"/>
+          <text x="220" y="200" text-anchor="middle" fill="#56523F" font-family="Inter,sans-serif" font-size="10">Tablet</text>
+          <rect x="334" y="170" width="72" height="50" rx="6" fill="#FFFDF8" stroke="#DCD3BC"/>
+          <text x="370" y="200" text-anchor="middle" fill="#56523F" font-family="Inter,sans-serif" font-size="10">Office PC</text>
+          <text x="220" y="246" text-anchor="middle" fill="#8A6414" font-family="Inter,sans-serif" font-size="11" font-weight="600">Connected over your own Wi-Fi — no internet needed</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="section section-alt" id="features">
+  <div class="container-narrow">
+    <div class="section-head">
+      <div class="kicker">Features</div>
+      <h2>Everything a growing shop or wholesaler needs — nothing you have to configure.</h2>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Products &amp; Inventory</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Full catalog with live stock-on-hand, computed the instant something is sold or received.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Point of Sale</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Scan a barcode or pick a product, ring up the sale, done — works at every till at once.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Purchase &amp; Sales Orders</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Track bulk orders from placement to fulfillment, with stock updating automatically.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12M6 22h12M7 2c0 5 10 5 10 10S7 17 7 22M17 2c0 5-10 5-10 10s10 5 10 10"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Batch &amp; Expiry Tracking</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Know exactly what's approaching its expiry date before it becomes a write-off.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Reorder Alerts</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">A clear list of what's running low, so you restock before you lose a sale.</p></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Profit &amp; Loss, Live</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Revenue, cost and profit calculated from what's actually sold — daily, weekly, monthly, yearly.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Team &amp; Role Access</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Give each staff member their own login and exactly the modules their role needs.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Suppliers &amp; Customers</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Every contact, every transaction history, in one searchable place.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3" style="border-bottom:1px solid var(--line);">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-1L3 21l2-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">Team Chat</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">A direct line between Admin and staff, built into the same system — no separate app.</p></div>
+        </div>
+        <div class="d-flex gap-3 py-3">
+          <i class="ico-wrap" style="font-size:1.3rem;color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="6" cy="16" r="1"/></svg></i>
+          <div><h3 style="font-size:1.02rem;margin:0;">One-Click Backup</h3><p style="color:var(--ink-soft);font-size:.9rem;margin:4px 0 0;">Your entire business, as one file — download it anytime, restore it just as easily.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY CHOOSE OKV ============ -->
+<section class="section" id="why">
+  <div class="container-narrow">
+    <div class="section-head">
+      <div class="kicker">Why choose OKV</div>
+      <h2>Built for how Nigerian businesses actually run — not adapted from somewhere else.</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h3 style="font-size:1.08rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.7 11a10 10 0 0 1 4.6 2.9M5 12.6A10 10 0 0 1 9.3 9.9M10.7 5.1A16 16 0 0 1 22 9.3M2 8.8a16 16 0 0 1 4.2-2.6M8.5 16.4a5 5 0 0 1 4.6-1.5"/><line x1="12" y1="20" x2="12" y2="20"/></svg></i> No internet, no excuses</h3>
+        <p style="color:var(--ink-soft);font-size:.94rem;">Cloud software stalls the moment your connection drops. This one was built assuming the internet might not be there at all — and works perfectly regardless.</p>
+      </div>
+      <div class="col-md-4">
+        <h3 style="font-size:1.08rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></i> One payment, not a leash</h3>
+        <p style="color:var(--ink-soft);font-size:.94rem;">₦120,000 once. No monthly debit, no surprise price increase, no losing access because a renewal failed. You own your copy outright.</p>
+      </div>
+      <div class="col-md-4">
+        <h3 style="font-size:1.08rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></i> Your data stays yours</h3>
+        <p style="color:var(--ink-soft);font-size:.94rem;">Nothing about your business sits on someone else's server. It's on your computer, under your control, backed up on your own schedule.</p>
+      </div>
+      <div class="col-md-4">
+        <h3 style="font-size:1.08rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="17" y="14" width="4" height="6" rx="1"/></svg></i> Real support from OKV Technology</h3>
+        <p style="color:var(--ink-soft);font-size:.94rem;">A direct line to the team that built it — by phone, WhatsApp, or email — not a ticket queue.</p>
+      </div>
+      <div class="col-md-4">
+        <h3 style="font-size:1.08rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></svg></i> Try before you pay</h3>
+        <p style="color:var(--ink-soft);font-size:.94rem;">12 full days with real data, every module unlocked. Decide with your own numbers, not a sales demo.</p>
+      </div>
+      <div class="col-md-4">
+        <h3 style="font-size:1.08rem;"><i class="ico-wrap" style="color:var(--brass-deep);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/></svg></i> 30-day money-back guarantee</h3>
+        <p style="color:var(--ink-soft);font-size:.94rem;">Buy it, use it properly for a month — if it's genuinely not for you, get your money back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section section-alt" id="faq">
+  <div class="container-narrow">
+    <div class="section-head">
+      <div class="kicker">FAQ</div>
+      <h2>Questions business owners ask us most.</h2>
+    </div>
+    <div class="accordion" id="faqAccordion" style="max-width:760px;">
+      <div class="accordion-item" style="border-color:var(--line);">
+        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">Do I need the internet to use this at all?</button></h2>
+        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body" style="color:var(--ink-soft);">No — day-to-day use needs no internet connection whatsoever. The only moment internet is useful is submitting your one-time activation payment proof, and even that can be done by email instead if you prefer.</div></div>
+      </div>
+      <div class="accordion-item" style="border-color:var(--line);">
+        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">How many computers or staff can use it?</button></h2>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body" style="color:var(--ink-soft);">As many as your Wi-Fi or network can comfortably handle — there's no per-device or per-user license fee. One computer runs the server; everyone else just opens a browser.</div></div>
+      </div>
+      <div class="accordion-item" style="border-color:var(--line);">
+        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">What happens when my free trial ends?</button></h2>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body" style="color:var(--ink-soft);">Your data stays fully visible — nothing is deleted or hidden. The system switches to read-only until it's activated, right from the Admin dashboard, with clear instructions and a simple form.</div></div>
+      </div>
+      <div class="accordion-item" style="border-color:var(--line);">
+        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">How does activation actually work?</button></h2>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body" style="color:var(--ink-soft);">Pay the one-time fee, submit your payment proof from the Admin dashboard (or by email), and you'll receive your activation code and licence key by email — usually within 24 hours. Type the code and the key in once; they work offline from then on.</div></div>
+      </div>
+      <div class="accordion-item" style="border-color:var(--line);">
+        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">Can I move from the LAN Edition to the cloud version later?</button></h2>
+        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body" style="color:var(--ink-soft);">Yes — talk to our team and we'll help you move your product and customer records across if you ever want to switch to OKV IMS Cloud.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSTALLATION SERVICE ============ -->
+<section class="section section-alt">
+  <div class="container-narrow">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-7">
+        <div class="kicker">Done-for-you option</div>
+        <h2 style="font-size:clamp(1.5rem,2.6vw,2rem);">Not comfortable installing it yourself? We'll do it for you.</h2>
+        <p style="color:var(--ink-soft);">OKV Technology Consults offers a paid installation service — our team sets up the server computer, installs the software, loads your starting product list, connects your other devices, and trains your staff on the spot. Ideal if you'd rather hand the whole setup to someone else.</p>
+        <a href="pricing.html" class="btn btn-outline-forest mt-2">Ask About Installation Service</a>
+      </div>
+      <div class="col-lg-5">
+        <div class="card" style="background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:26px;">
+          <ul style="list-style:none;padding:0;margin:0;font-size:.92rem;color:var(--ink-soft);">
+            <li class="d-flex gap-2 py-2" style="border-bottom:1px solid var(--line);"><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> On-site or remote setup, your choice</li>
+            <li class="d-flex gap-2 py-2" style="border-bottom:1px solid var(--line);"><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Your product list loaded in before we leave</li>
+            <li class="d-flex gap-2 py-2" style="border-bottom:1px solid var(--line);"><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Every till/device connected and tested</li>
+            <li class="d-flex gap-2 py-2"><i class="ico-wrap" style="color:var(--ok);"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></i> Hands-on staff training included</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section style="background:linear-gradient(165deg, var(--forest-deep) 0%, var(--forest) 100%); color:var(--parchment); padding:70px 0; text-align:center;">
+  <div class="container-narrow">
+    <h2 style="color:#fff;font-size:clamp(1.6rem,3vw,2.2rem);">Your stock, your sales, your business — running on your own terms.</h2>
+    <p style="color:#DCE3D6;max-width:520px;margin:14px auto 28px;">Start with 12 days free. No card, no commitment, no internet required to run it.</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="pricing.html#trial" class="btn btn-brass btn-lg">Download Free Trial</a>
+      <a href="demo.html" class="btn btn-outline-parchment btn-lg">View Live Demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer style="background:var(--ink);color:#C9D3C1;padding:50px 0 24px;font-size:.9rem;">
+  <div class="container-narrow">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="brand-mark" style="color:#fff;"><span class="chip">OKV</span> IMS LAN Edition</div>
+        <p style="margin-top:12px;color:#9CA596;">Offline inventory management, built by OKV Technology Consults for Nigerian shops and wholesalers.</p>
+      </div>
+      <div class="col-md-4">
+        <h3 style="color:#fff;font-size:.95rem;font-family:'Inter',sans-serif;font-weight:700;">Product</h3>
+        <ul class="list-unstyled" style="margin-top:10px;">
+          <li class="mb-2"><a href="index.html#features" style="color:#C9D3C1;">Features</a></li>
+          <li class="mb-2"><a href="pricing.html" style="color:#C9D3C1;">Pricing</a></li>
+          <li class="mb-2"><a href="demo.html" style="color:#C9D3C1;">Live Demo</a></li>
+          <li class="mb-2"><a href="index.html#faq" style="color:#C9D3C1;">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h3 style="color:#fff;font-size:.95rem;font-family:'Inter',sans-serif;font-weight:700;">Contact</h3>
+        <ul class="list-unstyled" style="margin-top:10px;color:#C9D3C1;">
+          <li class="mb-2">technologyokv@gmail.com</li>
+          <li class="mb-2">+234 915 210 3969 (call) · +234 810 414 1138 (WhatsApp)</li>
+          <li class="mb-2">www.okvtechnology.com</li>
+        </ul>
+      </div>
+    </div>
+    <hr style="border-color:#2C332A;margin:34px 0 18px;">
+    <div class="d-flex justify-content-between flex-wrap gap-2" style="color:#7E8777;font-size:.82rem;">
+      <span>© 2026 OKV Technology Consults. All rights reserved.</span>
+      <span><a href="privacy-policy.html" style="color:#7E8777;">Privacy Policy</a> · <a href="terms.html" style="color:#7E8777;">Terms of Service</a> · <a href="cookie-policy.html" style="color:#7E8777;">Cookie Policy</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ COOKIE CONSENT ============ -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:#DCE3D6;padding:14px 20px;z-index:999;font-size:.85rem;">
+  <div class="container-narrow d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <span>We use only essential cookies to remember your preferences — no tracking or ads. <a href="cookie-policy.html" style="color:var(--brass);">Learn more</a></span>
+    <button class="btn btn-brass btn-sm" onclick="localStorage.setItem('okv_cookie_consent','1');document.getElementById('cookieBanner').style.display='none';">Got it</button>
+  </div>
+</div>
+<script>if(!localStorage.getItem('okv_cookie_consent')) document.getElementById('cookieBanner').style.display='block';</script>
+
+<script src="vendor/bootstrap.bundle.min.js"></script>
+</body>
+</html>

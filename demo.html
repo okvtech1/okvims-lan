@@ -1,0 +1,3252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OKV IMS — LAN Edition</title>
+<style>
+.ico{width:1em;height:1em;display:inline-block;vertical-align:-0.125em;flex-shrink:0;}.ico-wrap{display:inline-block;line-height:0;vertical-align:-0.125em;}
+:root{
+  --gold:#C99A3E; --gold-dark:#8A6414; --cream:#FBF6EC; --ink:#2B2620; --ink-2:#6B6250;
+  --line:#E4DAC3; --ok:#3F7A4E; --warn:#B8562E; --danger:#B13B3B;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;background:var(--cream);color:var(--ink);font-size:13.5px;}
+button{cursor:pointer;font-family:inherit;}
+input,select,textarea{font-family:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);width:100%;}
+label{font-size:11.5px;color:var(--ink-2);display:block;margin:6px 0 2px;}
+.btn{padding:7px 14px;border-radius:7px;border:1px solid var(--line);background:#fff;font-size:12.5px;}
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.btn-outline{background:#fff;border-color:var(--gold);color:var(--gold-dark);}
+.btn-danger{background:#fff;border-color:var(--danger);color:var(--danger);}
+.btn-sm{padding:4px 10px;font-size:11.5px;}
+.hidden{display:none !important;}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px;}
+.row{display:flex;gap:10px;flex-wrap:wrap;}
+.row>div{flex:1;min-width:160px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{background:var(--ink);color:#F7EFDD;text-align:left;padding:6px 8px;}
+td{padding:6px 8px;border-bottom:1px solid var(--line);}
+tr:nth-child(even) td{background:#FAF6EC;}
+.page-title{font-size:19px;font-weight:700;margin:0 0 4px;}
+.page-sub{color:var(--ink-2);font-size:12px;margin-bottom:14px;}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;flex:1;min-width:150px;}
+.kpi .n{font-size:22px;font-weight:700;}
+.kpi .l{font-size:11px;color:var(--ink-2);}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10.5px;color:#fff;}
+.b-ok{background:var(--ok);} .b-warn{background:var(--warn);} .b-danger{background:var(--danger);} .b-muted{background:#9B9282;}
+/* login */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#1E1B15,#3A2F18,#C99A3E);}
+#loginScreen .box{background:#fff;border-radius:14px;padding:30px;width:320px;box-shadow:0 20px 50px rgba(0,0,0,.3);}
+.login-box-wide{width:auto !important;max-width:680px;display:flex;gap:28px;align-items:flex-start;}
+.login-col-form{flex:1;min-width:280px;}
+.login-col-qr{flex:0 0 200px;display:flex;flex-direction:column;align-items:center;border-left:1px solid var(--line);padding-left:24px;}
+#loginQrCanvas{border:1px solid var(--line);border-radius:8px;background:#fff;}
+@media(max-width:680px){
+  .login-box-wide{flex-direction:column;max-width:360px;}
+  .login-col-form{min-width:0;width:100%;}
+  .login-col-qr{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:18px;width:100%;}
+}
+#loginScreen h1{font-size:18px;margin:0 0 4px;}
+#loginScreen p{font-size:11.5px;color:var(--ink-2);margin:0 0 16px;}
+#loginErr{color:var(--danger);font-size:12px;margin-top:8px;min-height:16px;}
+/* app shell */
+#app{display:flex;min-height:100vh;}
+#sidebar{width:220px;background:#1E1B15;color:#F7EFDD;padding:14px 0;flex-shrink:0;}
+#sidebar .brand{padding:0 16px 14px;font-weight:700;font-size:14px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:10px;}
+#sidebar a{display:flex;align-items:center;gap:8px;padding:9px 16px;color:#E8DFC7;text-decoration:none;font-size:12.5px;}
+#sidebar a:hover,#sidebar a.active{background:rgba(201,154,62,.18);color:#fff;}
+#sidebar .grp{font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:#A89A72;padding:12px 16px 4px;}
+#main{flex:1;padding:20px 24px;overflow:auto;}
+#topbar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:16px;font-size:12px;color:var(--ink-2);}
+.pane{display:none;} .pane.active{display:block;}
+.modal-bg{position:fixed;inset:0;background:rgba(20,30,25,.45);display:none;align-items:center;justify-content:center;z-index:500;padding:16px;}
+.modal-bg.show{display:flex;}
+.modal{background:#fff;border-radius:12px;padding:20px;max-width:520px;width:100%;max-height:85vh;overflow:auto;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:12.5px;z-index:900;opacity:0;transition:opacity .2s;}
+.toast.show{opacity:1;}
+.cart-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px;}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:13px;margin-right:4px;}
+.icon-btn:hover{background:var(--cream);border-color:var(--gold);}
+.icon-btn.danger:hover{background:#FCEEE7;border-color:var(--danger);}
+.actions-cell{white-space:nowrap;}
+.small{font-size:11px;color:var(--ink-2);}
+/* ---------- Responsive: desktop sidebar -> tablet icon rail -> phone bottom tab bar ---------- */
+html,body{max-width:100%;overflow-x:hidden;}
+img,svg,canvas{max-width:100%;}
+#main{min-width:0;}                       /* lets flex children shrink instead of forcing page-wide sideways scroll */
+.card{overflow-x:auto;}                   /* wide tables scroll inside their card, never the whole page */
+#sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;}
+#navList{display:block;}
+
+/* Tablet: collapse to a slim icon rail so the content gets the width */
+@media(max-width:1100px){
+  #sidebar{width:64px;padding:10px 0;}
+  #sidebar .brand{font-size:0;padding:0 0 10px;text-align:center;}
+  #sidebar .brand::first-line{font-size:18px;}
+  #sidebar .brand .small{display:none;}
+  #sidebar .grp{font-size:0;padding:6px 0;border-top:1px solid rgba(255,255,255,.1);margin-top:4px;}
+  #sidebar a{justify-content:center;padding:11px 0;font-size:18px;}
+  #sidebar a .label{display:none;}
+  #main{padding:16px 18px;}
+}
+
+/* Phone: navigation becomes a fixed bottom tab bar with icon + short label */
+@media(max-width:800px){
+  #app{flex-direction:column;}
+  #sidebar{
+    position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;z-index:400;
+    padding:0;overflow:hidden;border-top:1px solid rgba(255,255,255,.15);
+    box-shadow:0 -4px 14px rgba(0,0,0,.25);
+  }
+  #sidebar .brand,#sidebar .grp{display:none;}
+  #navList{display:flex;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 4px calc(4px + env(safe-area-inset-bottom));}
+  #navList::-webkit-scrollbar{display:none;}
+  #sidebar a{flex:0 0 auto;flex-direction:column;gap:1px;min-width:62px;padding:6px 6px;font-size:19px;border-radius:8px;}
+  #sidebar a .label{display:block;font-size:9.5px;line-height:1.15;text-align:center;white-space:nowrap;}
+  #sidebar a.active{background:rgba(201,154,62,.28);}
+  #main{padding:12px 12px 84px;}          /* bottom padding clears the fixed tab bar */
+  #topbar{flex-wrap:wrap;gap:6px;justify-content:space-between;}
+  #trialBanner{flex-wrap:wrap;}
+  .dash-cta{display:none !important;}     /* the top trial banner already says this on phones */
+  .row{flex-direction:column;}
+  .row>div{min-width:0;flex:1 1 auto;width:100%;}
+  #kpis.row{flex-direction:row;flex-wrap:wrap;gap:8px;}
+  #kpis .kpi{flex:1 1 calc(50% - 8px);min-width:calc(50% - 8px);padding:10px;}
+  #kpis .kpi .n{font-size:17px;}
+  table{font-size:11.5px;min-width:520px;}
+  th,td{padding:6px 5px;}
+  .modal{max-width:96vw;padding:14px;max-height:90vh;}
+  .card{padding:10px;}
+  .page-title{font-size:17px;}
+  /* 16px inputs stop iOS Safari zooming the page on focus; larger tap targets */
+  input,select,textarea{font-size:16px;padding:9px 10px;}
+  .btn,.btn-sm{min-height:38px;}
+  .icon-btn{width:34px;height:34px;font-size:15px;}
+  .data-tools-btn{margin:6px 0 0 0 !important;}
+  .toast{left:12px;right:12px;bottom:80px;text-align:center;}
+}
+@media(max-width:420px){ #sidebar a{min-width:56px;} }
+/* Very large screens: keep content readable rather than stretching edge to edge */
+@media(min-width:1700px){ #main{max-width:1500px;} }
+</style>
+<style>
+#demoBanner{position:fixed;top:0;left:0;right:0;z-index:990;background:#C99A3E;color:#1E1B15;padding:8px 14px;
+ font-size:12.5px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+#demoBanner .cta-btns{display:flex;gap:8px;flex-wrap:wrap;}
+#demoBanner a{background:#1E1B15;color:#fff;padding:6px 12px;border-radius:7px;text-decoration:none;font-weight:600;white-space:nowrap;}
+#demoBanner a.alt{background:transparent;color:#1E1B15;border:1.5px solid #1E1B15;}
+body{padding-top:var(--demo-top,46px);}
+#sidebar{top:0 !important;height:calc(100vh - var(--demo-top,46px)) !important;}
+@media(max-width:800px){#sidebar{top:auto !important;height:auto !important;}}
+/* disabled fields look disabled, not broken */
+#app input:disabled,#app select:disabled,#app textarea:disabled{background:#F1ECDD !important;color:#6B6553 !important;cursor:not-allowed !important;opacity:.85;}
+#ctaPanel{position:fixed;inset:0;background:rgba(14,36,28,.55);z-index:995;display:none;align-items:center;justify-content:center;padding:16px;}
+#ctaPanel.show{display:flex;}
+#ctaPanel .box{background:#FFFDF8;border-radius:14px;max-width:460px;width:100%;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+#ctaPanel h3{font-family:Georgia,serif;font-size:20px;color:#16342A;margin-bottom:6px;}
+#ctaPanel p{font-size:14px;line-height:1.5;color:#3A3A32;margin-bottom:12px;}
+#ctaPanel .acts{display:flex;flex-direction:column;gap:8px;}
+#ctaPanel .acts a,#ctaPanel .acts button{display:block;text-align:center;padding:11px 14px;border-radius:9px;font-weight:700;font-size:14px;text-decoration:none;border:0;cursor:pointer;}
+#ctaPanel .primary{background:#C99A3E;color:#1E1B15;}
+#ctaPanel .secondary{background:#16342A;color:#F7F2E7;}
+#ctaPanel .ghost{background:transparent;color:#16342A;border:1.5px solid #16342A !important;}
+</style>
+</head>
+<body><div id="demoBanner"><span><b>Live demo of the real system.</b> Sample data. Sign in with <b>admin / admin123</b>, <b>amaka / pass1234</b> (Cashier) or <b>tunde / pass1234</b> (Storekeeper). Entering or saving data is switched off in this demo.</span><span class="cta-btns"><a href="https://www.okvtechnology.com/okvinms/pricing.html" target="_blank" rel="noopener">Get your copy</a><a class="alt" href="tel:+2349152103969">Call +234 915 210 3969</a><a class="alt" href="https://wa.me/2348104141138" target="_blank" rel="noopener">WhatsApp</a></span></div>
+<div id="ctaPanel" role="dialog" aria-modal="true" aria-labelledby="ctaTitle"><div class="box"><h3 id="ctaTitle">This is a live demo</h3><p>You are looking at the real OKV IMS system with sample data. To enter your own products, sales and staff, get your copy and it will be set up for your business.</p><div class="acts"><a class="primary" href="https://www.okvtechnology.com/okvinms/pricing.html" target="_blank" rel="noopener">Get your copy</a><a class="secondary" href="tel:+2349152103969">Call us: +234 915 210 3969</a><a class="secondary" href="https://wa.me/2348104141138" target="_blank" rel="noopener">WhatsApp us: +234 810 414 1138</a><a class="ghost" href="mailto:technologyokv@gmail.com">Email technologyokv@gmail.com</a><button class="ghost" type="button" onclick="closeCta()">Keep exploring the demo</button></div></div></div>
+
+<div id="loginScreen">
+  <div class="box login-box-wide">
+    <div class="login-col-form">
+    <h1>OKV IMS — LAN Edition</h1>
+    <p>Offline inventory management. Sign in with your username and password.</p>
+    <label>Username</label><input id="loginUser" autofocus>
+    <label>Password</label><input id="loginPass" type="password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-gold" style="width:100%;margin-top:14px;" onclick="doLogin()">Log In</button>
+    <div id="loginErr"></div>
+    <div class="small" style="margin-top:14px;">First time? Default login is <b>admin</b> / <b>admin123</b> — change the password after logging in.</div>
+    <div class="small" style="margin-top:10px;text-align:center;"><a href="#" onclick="document.getElementById('forgotBox').classList.toggle('hidden');return false;">Forgot password?</a></div>
+    <div id="forgotBox" class="hidden small" style="margin-top:10px;background:var(--cream);border-radius:8px;padding:10px;line-height:1.5;">
+      Since this system runs entirely offline, passwords can't be reset by email. Whoever has access to
+      <b>this server computer</b> can reset the Admin password directly:
+      <ol style="margin:8px 0 0 16px;padding:0;">
+        <li>Close this program if it's running.</li>
+        <li>Open a Command Prompt in the install folder.</li>
+        <li>Run: <code>python okv_ims_lan.py --reset-admin</code></li>
+        <li>Follow the prompts to set a new password, then start the server again.</li>
+      </ol>
+      For a staff account (not Admin), ask your Admin to reset it from Team &amp; Access.
+    </div>
+    </div>
+    <div class="login-col-qr">
+      <div class="small" style="font-weight:700;color:var(--ink);margin-bottom:8px;"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg> Open on another device</div>
+      <canvas id="loginQrCanvas" width="176" height="176"></canvas>
+      <div class="small" id="loginQrUrl" style="margin-top:8px;word-break:break-all;text-align:center;"></div>
+      <div class="small" style="margin-top:6px;text-align:center;color:var(--ink-2);">Scan with any phone or tablet camera on the <b>same Wi-Fi</b>. It simply opens this login page &mdash; it does not sign anyone in or share anything.</div>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div id="sidebar">
+    <div class="brand"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg> OKV IMS<br><span class="small" style="color:#A89A72;">LAN Edition</span></div>
+    <div id="navList"></div>
+  </div>
+  <div id="main">
+    <div id="trialBanner" class="hidden" style="background:var(--warn);color:#fff;padding:8px 14px;border-radius:8px;margin-bottom:12px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;gap:10px;"></div>
+    <div id="topbar">
+      <span id="whoLabel"></span>
+      <button class="btn btn-sm" onclick="nav('settings')"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="2.6 2.4"/><circle cx="12" cy="12" r="3"/></svg> Settings</button>
+      <button class="btn btn-sm" onclick="doLogout()">Log Out</button>
+    </div>
+    <div id="pages"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* QR code — vendored and offline-safe. MIT-licensed encoder (Kazuhiko Arase, d-project.com),
+   the same core used by the davidshimjs/qrcodejs library, bundled inline so it needs no internet.
+   It only ENCODES this computer's own LAN address into a square; it never reads a camera. */
+// ---- QRMode.js ----
+var QRMode = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+// ---- QRErrorCorrectLevel.js ----
+var QRErrorCorrectLevel = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+// ---- QRMaskPattern.js ----
+var QRMaskPattern = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+// ---- QRMath.js ----
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+
+// ---- QRPolynomial.js ----
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+
+// ---- QRUtil.js ----
+
+
+
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+
+// ---- QRRSBlock.js ----
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+
+// ---- QRBitBuffer.js ----
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+
+// ---- QR8bitByte.js ----
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+
+// ---- index.js ----
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+
+
+
+
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+
+/* Draws the QR matrix onto a canvas: one filled square per dark module, with the standard 4-module quiet zone. */
+function drawQRCode(canvasId, text){
+  var canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  var qr = new QRCode(-1, QRErrorCorrectLevel.L);
+  qr.addData(text);
+  qr.make();
+  var n = qr.getModuleCount(), quiet = 4;
+  var cellPx = Math.floor(canvas.width / (n + quiet * 2));
+  var offset = Math.floor((canvas.width - cellPx * (n + quiet * 2)) / 2) + cellPx * quiet;
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#000';
+  for(var r = 0; r < n; r++) for(var c = 0; c < n; c++)
+    if(qr.isDark(r, c)) ctx.fillRect(offset + c*cellPx, offset + r*cellPx, cellPx, cellPx);
+}
+</script>
+<script>
+/* ============================== Core / API ============================== */
+let TOKEN = localStorage.getItem('okv_token') || '';
+let ME = null;
+let CACHE = {};
+
+async function api(path, body){
+  const opts = { method: body ? 'POST' : 'GET', headers: {} };
+  if(body){ opts.headers['Content-Type']='application/json'; opts.body = JSON.stringify(Object.assign({token:TOKEN}, body)); }
+  // A path may already carry its own query string (e.g. 'pnl?period=monthly'), so join with & in that case.
+  const qs = (!body && TOKEN) ? ((path.indexOf('?') === -1 ? '?' : '&') + 'token=' + encodeURIComponent(TOKEN)) : '';
+  const res = await fetch('/api/'+path+qs, opts);
+  const data = await res.json().catch(()=>({ok:0,error:'Bad response from server.'}));
+  if(!data.ok){
+    if(data.error==='TRIAL_EXPIRED'){ renderTrialBanner(); throw new Error(data.message || 'Your free trial has ended.'); }
+    throw new Error(data.message || data.error || 'Something went wrong.');
+  }
+  return data;
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function esc(s){ return (s===null||s===undefined?'':String(s)).replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+// Shared icon-button builder so every table's action column looks and behaves the same way.
+function iconBtn(icon, title, onclick, danger){
+  return `<button class="icon-btn${danger?' danger':''}" title="${esc(title)}" onclick="${onclick}">${icon}</button>`;
+}
+
+/* ============================== Lightweight charts (pure SVG, zero dependencies —
+   this has to work fully offline, so no chart library / CDN script is used anywhere). ============================== */
+function svgBarChart(points, opts){
+  opts = opts || {};
+  const w = opts.width || 560, h = opts.height || 180, pad = 28;
+  const max = Math.max(1, ...points.map(p=>p.value));
+  const bw = (w - pad*2) / points.length;
+  const bars = points.map((p,i)=>{
+    const bh = Math.max(2, (p.value/max) * (h - pad*2));
+    const x = pad + i*bw + bw*0.15;
+    const y = h - pad - bh;
+    return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw*0.7).toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${opts.color||'var(--gold)'}"><title>${esc(p.label)}: ${esc(p.valueLabel||p.value)}</title></rect>
+      <text x="${(x+bw*0.35).toFixed(1)}" y="${h-pad+14}" font-size="9" text-anchor="middle" fill="var(--ink-soft)">${esc(p.label)}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;max-height:${h}px;">
+    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="var(--line)" stroke-width="1"/>
+    ${bars}
+  </svg>`;
+}
+function svgDonut(segments, opts){
+  // segments: [{label, value, color}]
+  opts = opts || {};
+  const size = opts.size || 140, r = size/2 - 10, cx = size/2, cy = size/2;
+  const total = Math.max(1, segments.reduce((s,x)=>s+x.value,0));
+  let angle = -90;
+  const paths = segments.map(seg=>{
+    const frac = seg.value/total;
+    const start = angle;
+    angle += frac*360;
+    const end = angle;
+    const large = (end-start) > 180 ? 1 : 0;
+    const toXY = a => [cx + r*Math.cos(a*Math.PI/180), cy + r*Math.sin(a*Math.PI/180)];
+    const [x1,y1] = toXY(start), [x2,y2] = toXY(end);
+    if(frac <= 0) return '';
+    return `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${seg.color}"><title>${esc(seg.label)}: ${seg.value}</title></path>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${size} ${size}" style="width:${size}px;height:${size}px;">
+    ${paths}<circle cx="${cx}" cy="${cy}" r="${r*0.55}" fill="#fff"/></svg>`;
+}
+function money(n){ return (CACHE.settings?.currencySymbol||'NGN') + ' ' + (Number(n||0)).toLocaleString(undefined,{maximumFractionDigits:2}); }
+function today(){ return new Date().toISOString().slice(0,10); }
+
+/* ============================== Auth ============================== */
+async function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  document.getElementById('loginErr').textContent = '';
+  try{
+    const r = await api('login', {username:u, password:p});
+    TOKEN = r.token; localStorage.setItem('okv_token', TOKEN);
+    ME = r.user;
+    await boot();
+  }catch(e){ document.getElementById('loginErr').textContent = e.message; }
+}
+async function doLogout(){
+  try{ await api('logout', {}); }catch(e){}
+  TOKEN=''; localStorage.removeItem('okv_token'); ME=null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+/* ============================== Nav / roles ============================== */
+const ROLE_MODULES = {
+  'Store Manager': ['dashboard','products','inventory','stockin','stockout','suppliers','customers','po','so','pos','reorder','adjustments','batches','reports','pnl','expenses','messages','chat','manual'],
+  'Cashier / POS Operator': ['dashboard','pos','customers','products','chat','manual'],
+  'Procurement Officer': ['dashboard','suppliers','po','products','inventory','reorder','chat','manual'],
+  'Storekeeper / Warehouse Officer': ['dashboard','inventory','stockin','stockout','adjustments','batches','products','chat','manual'],
+  'Inventory Auditor / Viewer': ['dashboard','inventory','products','reports','batches','chat','manual'],
+};
+const NAV = [
+  {grp:'Overview'},
+  {k:'dashboard', label:'Dashboard', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>'},
+  {grp:'Stock'},
+  {k:'products', label:'Products', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>'},
+  {k:'inventory', label:'Inventory', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>'},
+  {k:'stockin', label:'Stock In', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>'},
+  {k:'stockout', label:'Stock Out', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><polyline points="7 8 12 3 17 8"/><path d="M5 21h14"/></svg>'},
+  {k:'batches', label:'Batch & Expiry', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12M6 22h12M7 2c0 5 10 5 10 10S7 17 7 22M17 2c0 5-10 5-10 10s10 5 10 10"/></svg>'},
+  {k:'reorder', label:'Reorder Alerts', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/></svg>'},
+  {grp:'Partners'},
+  {k:'suppliers', label:'Suppliers', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>'},
+  {k:'customers', label:'Customers', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>'},
+  {grp:'Orders & Sales'},
+  {k:'po', label:'Purchase Orders', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>'},
+  {k:'so', label:'Sales Orders', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg>'},
+  {k:'pos', label:'Point of Sale', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>'},
+  {k:'adjustments', label:'Adjustments', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>'},
+  {grp:'Finance & Reports'},
+  {k:'expenses', label:'Expenses', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></svg>'},
+  {k:'pnl', label:'Profit & Loss', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'},
+  {k:'reports', label:'Reports', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>'},
+  {grp:'Communication'},
+  {k:'messages', label:'Message Members', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a5 5 0 0 1 0 8M18 5a9 9 0 0 1 0 14"/></svg>'},
+  {k:'chat', label:'Team Chat', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-1L3 21l2-5.4A8.5 8.5 0 1 1 21 11.5z"/></svg>'},
+  {grp:'System'},
+  {k:'team', label:'Team & Access', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>', adminOnly:true},
+  {k:'manual', label:'User Manual', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>'},
+  {k:'activate', label:'Activate', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg>', adminOnly:true},
+  {k:'settings', label:'Settings', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="2.6 2.4"/><circle cx="12" cy="12" r="3"/></svg>', adminOnly:true},
+  {k:'backup', label:'Backup', icon:'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="6" cy="16" r="1"/></svg>', adminOnly:true},
+];
+function allowedModules(){
+  if(ME.accountType==='Admin') return null; // null = everything
+  const set = new Set();
+  (ME.roles||[]).forEach(r => (ROLE_MODULES[r]||[]).forEach(m=>set.add(m)));
+  return set;
+}
+function renderNav(){
+  const allowed = allowedModules();
+  const list = document.getElementById('navList');
+  list.innerHTML = NAV.map(item=>{
+    if(item.grp) return `<div class="grp">${item.grp}</div>`;
+    if(item.adminOnly && ME.accountType!=='Admin') return '';
+    if(allowed && !allowed.has(item.k)) return '';
+    return `<a href="#" data-k="${item.k}" title="${esc(item.label)}" onclick="nav('${item.k}');return false;"><span>${item.icon}</span><span class="label">${item.label}</span></a>`;
+  }).join('');
+}
+/* Pages that get the shared Import / Export button. Pages with no importable data still
+   get Export, which works for any list. Dashboard, P&L and reports have their own export. */
+const DATA_TOOL_PAGES = {
+  products:'products', inventory:'inventory', customers:'customers', suppliers:'suppliers',
+  stockin:'stockin', stockout:'stockout', batches:'batches', po:'po', so:'so', pos:'pos',
+  adjustments:'adjustments', expenses:'expenses',
+};
+function addDataToolsButton(k){
+  const pane = document.getElementById('page-'+k);
+  if(!pane || pane.querySelector('.data-tools-btn')) return;
+  const anchor = pane.querySelector('.page-sub') || pane.querySelector('.page-title');
+  if(!anchor) return;
+  const btn = document.createElement('button');
+  btn.className = 'btn btn-outline btn-sm data-tools-btn';
+  btn.style.margin = '0 8px 8px 0';
+  btn.innerHTML = '<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></svg> Import / Export';
+  btn.onclick = () => openDataTools(DATA_TOOL_PAGES[k]);
+  anchor.after(btn);
+}
+/* Several actions (saving, importing, deleting) rebuild a page's content. A small observer on each
+   pane puts the Import / Export button back whenever that happens, so it is never lost. */
+function watchDataToolsButton(k){
+  const pane = document.getElementById('page-'+k);
+  if(!pane || pane._dtWatch) return;
+  pane._dtWatch = new MutationObserver(()=>{ if(!pane.querySelector('.data-tools-btn') && pane.querySelector('.page-title')) addDataToolsButton(k); });
+  pane._dtWatch.observe(pane, {childList:true});
+}
+function nav(k){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  const pane = document.getElementById('page-'+k);
+  if(pane) pane.classList.add('active');
+  document.querySelectorAll('#navList a').forEach(a=>a.classList.toggle('active', a.dataset.k===k));
+  const fn = window['render_'+k];
+  if(DATA_TOOL_PAGES[k]) watchDataToolsButton(k);
+  if(typeof fn==='function') Promise.resolve(fn()).then(()=>{ if(DATA_TOOL_PAGES[k]) addDataToolsButton(k); });
+  else if(DATA_TOOL_PAGES[k]) addDataToolsButton(k);
+}
+
+/* ============================== Boot ============================== */
+async function boot(){
+  try{
+    const who = await api('whoami');
+    ME = who.user;
+  }catch(e){ doLogout(); return; }
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('whoLabel').textContent = ME.username + (ME.accountType==='Admin' ? ' (Admin)' : (ME.roles||[]).length ? ' — '+ME.roles.join(', ') : '');
+  renderNav();
+  buildPages();
+  const s = await api('settings'); CACHE.settings = s.settings;
+  await renderTrialBanner();
+  nav('dashboard');
+}
+async function renderTrialBanner(){
+  const lic = await api('license');
+  CACHE.license = lic;
+  const el = document.getElementById('trialBanner');
+  if(lic.active){ el.classList.add('hidden'); return; }
+  el.classList.remove('hidden');
+  if(lic.expired){
+    el.style.background = 'var(--danger)';
+    el.innerHTML = `<span><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Your 12-day free trial has ended — the system is in read-only mode until it's activated.</span>
+      ${ME.accountType==='Admin' ? `<button class="btn btn-sm" style="background:#fff;" onclick="nav('activate')">Activate Now</button>` : '<span>Ask your Admin to activate.</span>'}`;
+  } else {
+    el.style.background = 'var(--warn)';
+    el.innerHTML = `<span><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12M6 22h12M7 2c0 5 10 5 10 10S7 17 7 22M17 2c0 5-10 5-10 10s10 5 10 10"/></svg> Free trial — ${lic.daysRemaining} day${lic.daysRemaining===1?'':'s'} remaining.</span>
+      ${ME.accountType==='Admin' ? `<button class="btn btn-sm" style="background:#fff;" onclick="nav('activate')">Activate / Buy License</button>` : ''}`;
+  }
+}
+if(TOKEN){ boot(); }
+
+/* Login-screen QR: encodes the public LAN address the server injected into this page. */
+(function(){
+  const lanUrl = null;
+  if(!lanUrl) return;
+  document.getElementById('loginQrUrl').textContent = lanUrl;
+  drawQRCode('loginQrCanvas', lanUrl);
+})();
+
+/* ============================== Modal helper ============================== */
+function openModal(html){ document.getElementById('modalBox').innerHTML = html; document.getElementById('modalBg').classList.add('show'); }
+function closeModal(){ document.getElementById('modalBg').classList.remove('show'); }
+
+/* ============================== Page scaffolding ============================== */
+function buildPages(){
+  const wrap = document.getElementById('pages');
+  wrap.innerHTML = NAV.filter(i=>i.k).map(i=>`<div class="pane" id="page-${i.k}"></div>`).join('');
+}
+</script>
+<script>
+/* ============================== DASHBOARD ============================== */
+async function render_dashboard(){
+  const el = document.getElementById('page-dashboard');
+  const lic = CACHE.license || await api('license');
+  CACHE.license = lic;
+  const trialCta = (!lic.active) ? `
+    <div class="card dash-cta" style="background:linear-gradient(135deg,#1E1B15,#3A2F18);color:#F7EFDD;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+      <div>
+        <div style="font-weight:700;">${lic.expired ? '<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Your free trial has ended' : '<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12M6 22h12M7 2c0 5 10 5 10 10S7 17 7 22M17 2c0 5-10 5-10 10s10 5 10 10"/></svg> '+lic.daysRemaining+' day'+(lic.daysRemaining===1?'':'s')+' left on your free trial'}</div>
+        <div class="small" style="color:#D9C08C;">One-time payment of ${money(lic.onceOffPrice)} — pay once, keep it forever. No subscriptions.</div>
+      </div>
+      <button class="btn btn-gold btn-sm" onclick="nav('activate')">${lic.expired ? 'Activate Now' : 'Activate / Buy License'}</button>
+    </div>` : '';
+  el.innerHTML = `<div class="page-title">Dashboard</div><div class="page-sub">Today, this month, and the last two weeks at a glance.</div>
+    ${trialCta}
+    <div id="kpis" class="row"></div>
+    <div class="row" style="margin-top:16px;align-items:stretch;">
+      <div class="card" style="flex:2;min-width:320px;">
+        <div class="page-sub" style="margin:0 0 10px;">Sales — last 14 days</div>
+        <div id="trendChart">Loading…</div>
+      </div>
+      <div class="card" style="flex:1;min-width:220px;display:flex;flex-direction:column;align-items:center;">
+        <div class="page-sub" style="margin:0 0 10px;align-self:flex-start;">Orders in progress</div>
+        <div id="ordersDonut"></div>
+        <div id="ordersLegend" style="margin-top:10px;font-size:11.5px;"></div>
+      </div>
+    </div>`;
+  const d = await api('dashboard');
+  document.getElementById('kpis').innerHTML = [
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>','Sales Today', money(d.todaySales), d.todaySalesCount+' transaction'+(d.todaySalesCount===1?'':'s')],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>','Sales This Month', money(d.monthSales), ''],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></svg>','Expenses This Month', money(d.monthExpenses), ''],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>','Stock Value On Hand', money(d.totalStockValue), ''],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>','Products', d.productCount, ''],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>','Low Stock Items', d.lowStockCount, d.lowStockCount>0?'Needs reorder':'All good'],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>','Customers', d.customerCount, ''],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>','Suppliers', d.supplierCount, ''],
+    ['<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>','Active Team Members', d.teamCount, ''],
+  ].map(([icon,l,n,sub])=>`<div class="kpi"><div style="font-size:18px;">${icon}</div><div class="n">${n}</div><div class="l">${l}</div>${sub?`<div class="small" style="margin-top:2px;">${sub}</div>`:''}</div>`).join('');
+
+  const trend = await api('dashboard/trend');
+  const points = trend.days.map(x=>({label:x.label, value:x.sales, valueLabel: money(x.sales)}));
+  document.getElementById('trendChart').innerHTML = svgBarChart(points, {height:190});
+
+  document.getElementById('ordersDonut').innerHTML = svgDonut([
+    {label:'Pending Purchase Orders', value:d.pendingPO, color:'var(--gold)'},
+    {label:'Pending Sales Orders', value:d.pendingSO, color:'var(--ink)'},
+  ].concat(d.pendingPO===0 && d.pendingSO===0 ? [{label:'None', value:1, color:'var(--line)'}] : []));
+  document.getElementById('ordersLegend').innerHTML = `
+    <div><span style="display:inline-block;width:9px;height:9px;background:var(--gold);border-radius:2px;"></span> Purchase Orders: <b>${d.pendingPO}</b></div>
+    <div style="margin-top:4px;"><span style="display:inline-block;width:9px;height:9px;background:var(--ink);border-radius:2px;"></span> Sales Orders: <b>${d.pendingSO}</b></div>`;
+}
+
+/* ============================== PRODUCTS ============================== */
+async function render_products(){
+  const el = document.getElementById('page-products');
+  const canWrite = ME.accountType==='Admin' || (ME.roles||[]).some(r=>['Store Manager','Storekeeper / Warehouse Officer','Procurement Officer'].includes(r));
+  el.innerHTML = `<div class="page-title">Products</div><div class="page-sub">Your product catalog.</div>
+    ${canWrite?`<button class="btn btn-gold btn-sm" onclick="openProductModal()">+ Add Product</button>
+`:''}
+    <div class="card" style="margin-top:10px;"><table><thead><tr><th>Name</th><th>SKU</th><th>Category</th><th>Cost</th><th>Price</th><th>Reorder Level</th><th></th></tr></thead><tbody id="tblProducts"></tbody></table></div>`;
+  const r = await api('products');
+  CACHE.products = r.products;
+  document.getElementById('tblProducts').innerHTML = r.products.map(p=>`
+    <tr><td><div style="display:flex;gap:8px;align-items:center;">${p.has_image?`<img src="${productPhotoUrl(p)}" alt="" loading="lazy" style="width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid var(--line);flex-shrink:0;">`:''}<span>${esc(p.name)}</span></div></td><td>${esc(p.sku||'—')}</td><td>${esc(p.category||'—')}</td><td>${money(p.cost)}</td><td>${money(p.price)}</td><td>${p.reorder_level}</td>
+    <td class="actions-cell">${canWrite?(iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>','Edit',`openProductModal(${JSON.stringify(p).replace(/"/g,'&quot;')})`)+iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteProduct(${p.id})`,true)):''}</td></tr>`
+  ).join('') || '<tr><td colspan="7" class="small" style="text-align:center;padding:16px;">No products yet.</td></tr>';
+}
+function openProductModal(p){
+  p = p || {};
+  openModal(`<h3>${p.id?'Edit':'Add'} Product</h3>
+    <label>Name</label><input id="pf_name" value="${esc(p.name||'')}">
+    <div class="row"><div><label>SKU / Barcode</label><input id="pf_sku" value="${esc(p.sku||'')}"></div>
+    <div><label>Category</label><input id="pf_category" value="${esc(p.category||'')}"></div></div>
+    <div class="row"><div><label>Unit</label><input id="pf_unit" value="${esc(p.unit||'pcs')}"></div>
+    <div><label>Reorder Level</label><input id="pf_reorder" type="number" value="${p.reorder_level||0}"></div></div>
+    <div class="row"><div><label>Cost Price</label><input id="pf_cost" type="number" step="0.01" value="${p.cost||0}"></div>
+    <div><label>Selling Price</label><input id="pf_price" type="number" step="0.01" value="${p.price||0}"></div></div>
+    <label>Product photo <span class="small">(optional)</span></label>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div id="pf_photo_preview" style="width:72px;height:72px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--cream);font-size:11px;color:var(--ink-soft);">${p.has_image?`<img src="${productPhotoUrl(p)}" style="width:100%;height:100%;object-fit:cover;">`:'No photo'}</div>
+      <div>
+        <input type="file" id="pf_photo" accept="image/*" onchange="previewProductPhoto()" style="font-size:12px;">
+        <div class="small" style="margin-top:4px;">Pick a picture from your phone or computer. It is resized automatically.</div>
+        <label style="display:flex;gap:6px;align-items:center;font-size:12px;margin-top:4px;"><input type="checkbox" id="pf_photo_remove"> Remove the current photo</label>
+      </div>
+    </div>
+    <input type="hidden" id="pf_photo_data" value="">
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveProduct(${p.id||'null'}, ${p.has_image?1:0})">Save</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+/* Resize a picked photo in the browser so it is small enough to store. Returns a JPEG data URL. */
+function shrinkImageFile(file, maxSide, quality){
+  return new Promise((resolve, reject)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = ()=>{
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(img.width * scale));
+      cv.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);  // flatten transparency to white
+      ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      resolve(cv.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); reject(new Error('That file is not a picture this browser can read. Try a JPEG or PNG.')); };
+    img.src = url;
+  });
+}
+async function previewProductPhoto(){
+  const f = document.getElementById('pf_photo').files[0];
+  if(!f) return;
+  const box = document.getElementById('pf_photo_preview');
+  try{
+    const data = await shrinkImageFile(f, 640, 0.82);
+    document.getElementById('pf_photo_data').value = data;
+    document.getElementById('pf_photo_remove').checked = false;
+    box.innerHTML = `<img src="${data}" style="width:100%;height:100%;object-fit:cover;">`;
+  }catch(e){ toast(e.message); document.getElementById('pf_photo').value = ''; }
+}
+function productPhotoUrl(p){
+  // <img> tags cannot send an Authorization header, so the session token travels in the query string.
+  return '/img/product/' + p.id + '?token=' + encodeURIComponent(TOKEN) + '&v=' + encodeURIComponent(p.updated_at || '');
+}
+async function saveProduct(id, hadImage){
+  try{
+    const body = {
+      id, name: document.getElementById('pf_name').value, sku: document.getElementById('pf_sku').value,
+      category: document.getElementById('pf_category').value, unit: document.getElementById('pf_unit').value,
+      reorderLevel: document.getElementById('pf_reorder').value, cost: document.getElementById('pf_cost').value,
+      price: document.getElementById('pf_price').value,
+    };
+    const newPhoto = document.getElementById('pf_photo_data').value;
+    const removing = document.getElementById('pf_photo_remove').checked;
+    // Only send 'image' when the user actually changed the photo; otherwise the server keeps the old one.
+    if(newPhoto) body.image = newPhoto;
+    else if(removing) body.image = '';
+    await api('products', body);
+    closeModal(); toast('Product saved.'); render_products();
+  }catch(e){ toast(e.message); }
+}
+async function deleteProduct(id){
+  if(!confirm('Delete this product?')) return;
+  try{ await api('products/delete', {id}); toast('Deleted.'); render_products(); }catch(e){ toast(e.message); }
+}
+/* ============================== CSV IMPORT / EXPORT (shared by every list page) ==============================
+   openDataTools(entity) opens one panel that shows the required columns with
+   instructions, downloads a ready-to-fill template, checks a chosen file with a
+   dry run (nothing is written), then imports it, and exports the same data as
+   CSV / Excel / JSON / printable PDF. */
+const IMPORT_TYPES_ALLOWED = ['products','customers','suppliers','expenses','stockin','batches'];
+const EXPORT_LABELS_UI = {products:'Products',inventory:'Inventory',customers:'Customers',suppliers:'Suppliers',
+  stockin:'Stock In',stockout:'Stock Out',pos:'POS Sales',adjustments:'Adjustments',expenses:'Expenses',
+  batches:'Batch & Expiry',po:'Purchase Orders',so:'Sales Orders'};
+
+function downloadText(filename, mime, content){
+  const blob = new Blob([content], {type: mime + ';charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+async function openDataTools(entity){
+  const specs = (await api('csv/spec')).specs;
+  const canImport = IMPORT_TYPES_ALLOWED.includes(entity) && specs[entity];
+  const cols = canImport ? specs[entity].columns : [];
+  openModal(`
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;">${canImport ? 'Import / Export — '+specs[entity].label : 'Export data'}</h3>
+      <button class="icon-btn" onclick="closeModal()" title="Close"></button>
+    </div>
+    ${canImport ? `
+    <div class="card" style="margin-top:12px;background:var(--cream);">
+      <strong>Step 1 — Get the template</strong>
+      <p class="small">Fill in one row per record. The first row must be the column names exactly as shown below.</p>
+      <table style="font-size:11.5px;"><thead><tr><th>Column</th><th>Required?</th><th>What to put in it</th></tr></thead><tbody>
+        ${cols.map(c=>`<tr><td><code>${esc(c.name)}</code></td><td>${c.required?'<b>Yes</b>':'Optional'}</td><td>${esc(c.help)}</td></tr>`).join('')}
+      </tbody></table>
+      <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="downloadTemplate('${entity}')"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg> Download CSV template</button>
+    </div>
+    <div class="card" style="background:var(--cream);">
+      <strong>Step 2 — Choose your filled file and check it</strong>
+      <p class="small">Save your sheet as <b>CSV (Comma delimited)</b> from Excel or Google Sheets. Checking first changes nothing — it only reports problems.</p>
+      <input type="file" id="importFile" accept=".csv,text/csv" onchange="previewImportFile('${entity}')">
+      <div id="importPreview" style="margin-top:8px;"></div>
+    </div>` : ''}
+    <div class="card" style="background:var(--cream);">
+      <strong>${canImport?'Step 3 — ':''}Export your data</strong>
+      <p class="small">Download a copy of your records to keep, share with an accountant, or open in Excel.</p>
+      <div class="row"><div><label>What to export</label>
+        <select id="exportEntity">${Object.keys(EXPORT_LABELS_UI).map(k=>`<option value="${k}" ${k===entity?'selected':''}>${EXPORT_LABELS_UI[k]}</option>`).join('')}</select></div>
+        <div><label>Format</label><select id="exportFormat">
+          <option value="csv">CSV (.csv) — opens in Excel / Sheets</option>
+          <option value="xls">Excel (.xls)</option>
+          <option value="json">JSON (.json) — for developers</option>
+          <option value="pdf">Printable / PDF</option></select></div></div>
+      <button class="btn btn-gold btn-sm" style="margin-top:8px;" onclick="doExport()"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg> Export</button>
+    </div>`);
+}
+
+async function downloadTemplate(entity){
+  try{
+    const r = await api('csv/template?entity='+encodeURIComponent(entity));
+    downloadText(r.filename, 'text/csv', '\ufeff' + r.csv);
+  }catch(e){ toast(e.message); }
+}
+
+async function previewImportFile(entity){
+  const box = document.getElementById('importPreview');
+  const f = document.getElementById('importFile').files[0];
+  if(!f){ box.innerHTML=''; return; }
+  const text = await f.text();
+  box.innerHTML = '<div class="small">Checking…</div>';
+  try{
+    const r = await api('csv/import', {entity, csv: text, dryRun: true});
+    const ok = r.errorCount === 0;
+    window._pendingImportText = text;
+    box.innerHTML = `
+      <div class="card" style="background:${ok?'#EAF2EA':'#FCEEE7'};">
+        <div><b>${r.valid}</b> row(s) ready to import${r.errorCount?`, <b>${r.errorCount}</b> row(s) need fixing:`:'. No problems found.'}</div>
+        ${r.errors.length?`<ul class="small" style="max-height:140px;overflow:auto;margin:6px 0 0 16px;">${r.errors.map(e=>`<li>Row ${e.row}: ${esc(e.reason)}</li>`).join('')}</ul>`:''}
+        ${r.valid>0?`<button class="btn btn-gold btn-sm" style="margin-top:8px;" onclick="runImportFile('${entity}')">Import ${r.valid} row(s)${r.errorCount?' (skip the rows with problems)':''}</button>`:''}
+      </div>`;
+  }catch(e){ box.innerHTML = `<div class="small" style="color:var(--danger);">${esc(e.message)}</div>`; }
+}
+
+async function runImportFile(entity){
+  try{
+    const r = await api('csv/import', {entity, csv: window._pendingImportText || '', dryRun: false});
+    toast(r.imported+' row(s) imported.' + (r.errorCount?' '+r.errorCount+' skipped.':''));
+    closeModal();
+    const fn = window['render_'+entity];
+    if(typeof fn==='function') fn();
+  }catch(e){ toast(e.message); }
+}
+
+async function doExport(){
+  const entity = document.getElementById('exportEntity').value;
+  const format = document.getElementById('exportFormat').value;
+  try{
+    const r = await api('export?entity='+entity+'&format='+format);
+    downloadText(r.filename, r.mime, r.content);
+    toast('Exported '+r.filename);
+  }catch(e){ toast(e.message); }
+}
+
+/* ============================== INVENTORY / REORDER ============================== */
+async function render_inventory(){
+  const el = document.getElementById('page-inventory');
+  el.innerHTML = `<div class="page-title">Inventory</div><div class="page-sub">Current stock on hand, computed live.</div>
+    <div class="card"><table><thead><tr><th>Product</th><th>Category</th><th>On Hand</th><th>Stock Value</th><th>Status</th></tr></thead><tbody id="tblInv"></tbody></table></div>`;
+  const r = await api('inventory');
+  document.getElementById('tblInv').innerHTML = r.inventory.map(p=>`
+    <tr><td>${esc(p.name)}</td><td>${esc(p.category||'—')}</td><td>${p.stock}</td><td>${money(p.stockValue)}</td>
+    <td>${p.lowStock?'<span class="badge b-warn">Low Stock</span>':'<span class="badge b-ok">OK</span>'}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="small" style="text-align:center;padding:16px;">No products yet.</td></tr>';
+}
+async function render_reorder(){
+  const el = document.getElementById('page-reorder');
+  el.innerHTML = `<div class="page-title">Reorder Alerts</div><div class="page-sub">Products at or below their reorder level.</div>
+    <div class="card"><table><thead><tr><th>Product</th><th>On Hand</th><th>Reorder Level</th></tr></thead><tbody id="tblReorder"></tbody></table></div>`;
+  const r = await api('reorder');
+  document.getElementById('tblReorder').innerHTML = r.reorder.map(p=>`
+    <tr><td>${esc(p.name)}</td><td>${p.stock}</td><td>${p.reorder_level}</td></tr>`
+  ).join('') || '<tr><td colspan="3" class="small" style="text-align:center;padding:16px;">Nothing needs reordering right now <svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></td></tr>';
+}
+</script>
+<script>
+/* ============================== STOCK IN / OUT ============================== */
+function productOptions(){
+  return (CACHE.products||[]).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+}
+async function render_stockin(){
+  const el = document.getElementById('page-stockin');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  if(!CACHE.suppliers) await api('suppliers').then(r=>CACHE.suppliers=r.suppliers);
+  el.innerHTML = `<div class="page-title">Stock In</div><div class="page-sub">Record goods received into stock.</div>
+    <div class="card"><div class="row">
+      <div><label>Date</label><input id="si_date" type="date" value="${today()}"></div>
+      <div><label>GRN / Reference</label><input id="si_grn"></div>
+      <div><label>Supplier</label><select id="si_supplier"><option value="">—</option>${(CACHE.suppliers||[]).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>
+    </div><div class="row">
+      <div><label>Product</label><select id="si_product">${productOptions()}</select></div>
+      <div><label>Quantity</label><input id="si_qty" type="number" step="0.01"></div>
+      <div><label>Unit Cost</label><input id="si_cost" type="number" step="0.01"></div>
+    </div><button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveStockIn()">Record Stock In</button></div>
+    <div class="card"><table><thead><tr><th>Date</th><th>GRN</th><th>Product</th><th>Supplier</th><th>Qty</th><th>Unit Cost</th><th>Total</th><th></th></tr></thead><tbody id="tblStockIn"></tbody></table></div>`;
+  loadStockIn();
+}
+async function loadStockIn(){
+  const r = await api('stockin');
+  document.getElementById('tblStockIn').innerHTML = r.stockIn.map(s=>`
+    <tr><td>${s.date}</td><td>${esc(s.grn||'—')}</td><td>${esc(s.product_name||'—')}</td><td>${esc(s.supplier_name||'—')}</td><td>${s.qty}</td><td>${money(s.unit_cost)}</td><td>${money(s.total)}</td>
+    <td class="actions-cell">${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteStockIn(${s.id})`,true)}</td></tr>`
+  ).join('') || '<tr><td colspan="8" class="small" style="text-align:center;padding:16px;">No stock-in records yet.</td></tr>';
+}
+async function deleteStockIn(id){
+  if(!confirm('Delete this stock-in record? This will reduce that product\'s stock on hand to match.')) return;
+  try{ await api('stockin/delete', {id}); toast('Deleted.'); loadStockIn(); }catch(e){ toast(e.message); }
+}
+async function saveStockIn(){
+  try{
+    await api('stockin', {
+      date: document.getElementById('si_date').value, grn: document.getElementById('si_grn').value,
+      supplierId: document.getElementById('si_supplier').value || null, productId: document.getElementById('si_product').value,
+      qty: document.getElementById('si_qty').value, unitCost: document.getElementById('si_cost').value,
+    });
+    toast('Stock in recorded.'); loadStockIn();
+  }catch(e){ toast(e.message); }
+}
+
+async function render_stockout(){
+  const el = document.getElementById('page-stockout');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  if(!CACHE.customers) await api('customers').then(r=>CACHE.customers=r.customers);
+  el.innerHTML = `<div class="page-title">Stock Out</div><div class="page-sub">Record stock leaving outside of a POS sale.</div>
+    <div class="card"><div class="row">
+      <div><label>Date</label><input id="so_date" type="date" value="${today()}"></div>
+      <div><label>Reference</label><input id="so_ref"></div>
+      <div><label>Customer</label><select id="so_customer"><option value="">—</option>${(CACHE.customers||[]).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
+    </div><div class="row">
+      <div><label>Product</label><select id="so_product">${productOptions()}</select></div>
+      <div><label>Quantity</label><input id="so_qty" type="number" step="0.01"></div>
+      <div><label>Price</label><input id="so_price" type="number" step="0.01"></div>
+    </div><button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveStockOut()">Record Stock Out</button></div>
+    <div class="card"><table><thead><tr><th>Date</th><th>Ref</th><th>Product</th><th>Customer</th><th>Qty</th><th>Price</th><th>Profit</th><th></th></tr></thead><tbody id="tblStockOut"></tbody></table></div>`;
+  loadStockOut();
+}
+async function loadStockOut(){
+  const r = await api('stockout');
+  document.getElementById('tblStockOut').innerHTML = r.stockOut.map(s=>`
+    <tr><td>${s.date}</td><td>${esc(s.ref||'—')}</td><td>${esc(s.product_name||'—')}</td><td>${esc(s.customer_name||'—')}</td><td>${s.qty}</td><td>${money(s.price)}</td><td>${money(s.profit)}</td>
+    <td class="actions-cell">${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteStockOut(${s.id})`,true)}</td></tr>`
+  ).join('') || '<tr><td colspan="8" class="small" style="text-align:center;padding:16px;">No stock-out records yet.</td></tr>';
+}
+async function deleteStockOut(id){
+  if(!confirm('Delete this stock-out record? This will restore that product\'s stock on hand to match.')) return;
+  try{ await api('stockout/delete', {id}); toast('Deleted.'); loadStockOut(); }catch(e){ toast(e.message); }
+}
+async function saveStockOut(){
+  try{
+    await api('stockout', {
+      date: document.getElementById('so_date').value, ref: document.getElementById('so_ref').value,
+      customerId: document.getElementById('so_customer').value || null, productId: document.getElementById('so_product').value,
+      qty: document.getElementById('so_qty').value, price: document.getElementById('so_price').value,
+    });
+    toast('Stock out recorded.'); loadStockOut();
+  }catch(e){ toast(e.message); }
+}
+
+/* ============================== BATCHES ============================== */
+async function render_batches(){
+  const el = document.getElementById('page-batches');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  el.innerHTML = `<div class="page-title">Batch &amp; Expiry</div><div class="page-sub">Track batch numbers and expiry dates.</div>
+    <div class="card"><div class="row">
+      <div><label>Product</label><select id="b_product">${productOptions()}</select></div>
+      <div><label>Batch No.</label><input id="b_no"></div>
+      <div><label>Expiry Date</label><input id="b_expiry" type="date"></div>
+      <div><label>Quantity</label><input id="b_qty" type="number" step="0.01"></div>
+    </div><button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveBatch()">Add Batch</button></div>
+    <div class="card"><table><thead><tr><th>Product</th><th>Batch No.</th><th>Expiry</th><th>Qty</th><th></th></tr></thead><tbody id="tblBatches"></tbody></table></div>`;
+  loadBatches();
+}
+async function loadBatches(){
+  const r = await api('batches');
+  const soon = d => d && (new Date(d) - new Date()) < 1000*60*60*24*30;
+  document.getElementById('tblBatches').innerHTML = r.batches.map(b=>`
+    <tr><td>${esc(b.product_name||'—')}</td><td>${esc(b.batch_no||'—')}</td>
+    <td>${b.expiry_date||'—'} ${soon(b.expiry_date)?'<span class="badge b-warn">Expiring Soon</span>':''}</td><td>${b.qty}</td>
+    <td class="actions-cell">${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteBatch(${b.id})`,true)}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="small" style="text-align:center;padding:16px;">No batches recorded yet.</td></tr>';
+}
+async function deleteBatch(id){
+  if(!confirm('Delete this batch record?')) return;
+  try{ await api('batches/delete', {id}); toast('Deleted.'); loadBatches(); }catch(e){ toast(e.message); }
+}
+async function saveBatch(){
+  try{
+    await api('batches', {
+      productId: document.getElementById('b_product').value, batchNo: document.getElementById('b_no').value,
+      expiryDate: document.getElementById('b_expiry').value || null, qty: document.getElementById('b_qty').value,
+    });
+    toast('Batch added.'); loadBatches();
+  }catch(e){ toast(e.message); }
+}
+</script>
+<script>
+/* ============================== SUPPLIERS / CUSTOMERS (shared pattern) ============================== */
+function contactPage(kind){ // kind: 'suppliers' | 'customers'
+  const el = document.getElementById('page-'+kind);
+  const label = kind==='suppliers' ? 'Suppliers' : 'Customers';
+  el.innerHTML = `<div class="page-title">${label}</div><div class="page-sub">Manage your ${label.toLowerCase()} list.</div>
+    <button class="btn btn-gold btn-sm" onclick="openContactModal('${kind}')">+ Add ${label.slice(0,-1)}</button>
+    <div class="card" style="margin-top:10px;"><table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th></th></tr></thead><tbody id="tbl_${kind}"></tbody></table></div>`;
+  loadContacts(kind);
+}
+async function loadContacts(kind){
+  const r = await api(kind);
+  CACHE[kind] = r[kind];
+  document.getElementById('tbl_'+kind).innerHTML = r[kind].map(c=>`
+    <tr><td>${esc(c.name)}</td><td>${esc(c.phone||'—')}</td><td>${esc(c.email||'—')}</td><td>${esc(c.address||'—')}</td>
+    <td class="actions-cell">${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>','Edit',`openContactModal('${kind}', ${JSON.stringify(c).replace(/"/g,'&quot;')})`)}${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteContact('${kind}', ${c.id})`,true)}</td></tr>`
+  ).join('') || `<tr><td colspan="5" class="small" style="text-align:center;padding:16px;">None yet.</td></tr>`;
+}
+function openContactModal(kind, c){
+  c = c || {};
+  openModal(`<h3>${c.id?'Edit':'Add'} ${kind==='suppliers'?'Supplier':'Customer'}</h3>
+    <label>Name</label><input id="c_name" value="${esc(c.name||'')}">
+    <label>Phone</label><input id="c_phone" value="${esc(c.phone||'')}">
+    <label>Email</label><input id="c_email" value="${esc(c.email||'')}">
+    <label>Address</label><input id="c_address" value="${esc(c.address||'')}">
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveContact('${kind}', ${c.id||'null'})">Save</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+async function saveContact(kind, id){
+  try{
+    await api(kind, { id, name: document.getElementById('c_name').value, phone: document.getElementById('c_phone').value,
+      email: document.getElementById('c_email').value, address: document.getElementById('c_address').value });
+    closeModal(); toast('Saved.'); loadContacts(kind);
+  }catch(e){ toast(e.message); }
+}
+async function deleteContact(kind, id){
+  if(!confirm('Delete this record?')) return;
+  try{ await api(kind+'/delete', {id}); toast('Deleted.'); loadContacts(kind); }catch(e){ toast(e.message); }
+}
+function render_suppliers(){ contactPage('suppliers'); }
+function render_customers(){ contactPage('customers'); }
+</script>
+<script>
+/* ============================== PURCHASE ORDERS ============================== */
+let PO_CART = [];
+async function render_po(){
+  const el = document.getElementById('page-po');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  if(!CACHE.suppliers) await api('suppliers').then(r=>CACHE.suppliers=r.suppliers);
+  PO_CART = [];
+  el.innerHTML = `<div class="page-title">Purchase Orders</div><div class="page-sub">Create and track orders placed with suppliers.</div>
+    <div class="card"><div class="row">
+      <div><label>Supplier</label><select id="po_supplier"><option value="">—</option>${(CACHE.suppliers||[]).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>
+      <div><label>Expected Date</label><input id="po_expected" type="date"></div>
+    </div><div class="row">
+      <div><label>Product</label><select id="po_product">${productOptions()}</select></div>
+      <div><label>Qty</label><input id="po_qty" type="number" step="0.01"></div>
+      <div><label>Cost</label><input id="po_cost" type="number" step="0.01"></div>
+      <div style="display:flex;align-items:flex-end;"><button class="btn btn-outline btn-sm" onclick="addPoItem()">+ Add Item</button></div>
+    </div>
+    <div id="poCart" style="margin-top:10px;"></div>
+    <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="savePo()">Create Purchase Order</button></div>
+    <div class="card"><table><thead><tr><th>PO No.</th><th>Date</th><th>Supplier</th><th>Status</th><th></th></tr></thead><tbody id="tblPo"></tbody></table></div>`;
+  loadPo();
+}
+function addPoItem(){
+  const pid = document.getElementById('po_product').value;
+  const prod = CACHE.products.find(p=>String(p.id)===String(pid));
+  const qty = parseFloat(document.getElementById('po_qty').value||0);
+  const cost = parseFloat(document.getElementById('po_cost').value||0);
+  if(!prod || qty<=0) return toast('Pick a product and a quantity first.');
+  PO_CART.push({productId: prod.id, name: prod.name, qty, cost});
+  renderPoCart();
+}
+function renderPoCart(){
+  document.getElementById('poCart').innerHTML = PO_CART.map((it,i)=>`
+    <div class="cart-item"><span>${esc(it.name)} — ${it.qty} × ${money(it.cost)}</span>
+    <button class="btn btn-sm btn-danger" onclick="PO_CART.splice(${i},1);renderPoCart();"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`
+  ).join('') || '<div class="small">No items added yet.</div>';
+}
+async function savePo(){
+  if(!PO_CART.length) return toast('Add at least one item.');
+  try{
+    await api('po', { supplierId: document.getElementById('po_supplier').value || null,
+      expected: document.getElementById('po_expected').value, items: PO_CART });
+    toast('Purchase order created.'); PO_CART=[]; renderPoCart(); loadPo();
+  }catch(e){ toast(e.message); }
+}
+async function loadPo(){
+  const r = await api('po');
+  document.getElementById('tblPo').innerHTML = r.po.map(p=>`
+    <tr><td>${esc(p.po_no)}</td><td>${p.date}</td><td>${esc(p.supplier_name||'—')}</td><td><span class="badge ${p.status==='Fulfilled'?'b-ok':'b-warn'}">${p.status}</span></td>
+    <td class="actions-cell">${p.status==='Pending'?(iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>','Mark Fulfilled',`markPoFulfilled(${p.id})`)+iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deletePo(${p.id})`,true)):'<span class="small">—</span>'}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="small" style="text-align:center;padding:16px;">No purchase orders yet.</td></tr>';
+}
+async function markPoFulfilled(id){
+  try{ await api('po/status', {id, status:'Fulfilled'}); toast('Marked fulfilled — stock updated.'); loadPo(); }catch(e){ toast(e.message); }
+}
+async function deletePo(id){
+  if(!confirm('Delete this purchase order?')) return;
+  try{ await api('po/delete', {id}); toast('Deleted.'); loadPo(); }catch(e){ toast(e.message); }
+}
+
+/* ============================== SALES ORDERS ============================== */
+let SO_CART = [];
+async function render_so(){
+  const el = document.getElementById('page-so');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  if(!CACHE.customers) await api('customers').then(r=>CACHE.customers=r.customers);
+  SO_CART = [];
+  el.innerHTML = `<div class="page-title">Sales Orders</div><div class="page-sub">Create and track orders for customers.</div>
+    <div class="card"><div class="row">
+      <div><label>Customer</label><select id="so2_customer"><option value="">—</option>${(CACHE.customers||[]).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
+      <div><label>Delivery Date</label><input id="so2_delivery" type="date"></div>
+    </div><div class="row">
+      <div><label>Product</label><select id="so2_product">${productOptions()}</select></div>
+      <div><label>Qty</label><input id="so2_qty" type="number" step="0.01"></div>
+      <div><label>Price</label><input id="so2_price" type="number" step="0.01"></div>
+      <div style="display:flex;align-items:flex-end;"><button class="btn btn-outline btn-sm" onclick="addSoItem()">+ Add Item</button></div>
+    </div>
+    <div id="soCart" style="margin-top:10px;"></div>
+    <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveSo()">Create Sales Order</button></div>
+    <div class="card"><table><thead><tr><th>SO No.</th><th>Date</th><th>Customer</th><th>Status</th><th></th></tr></thead><tbody id="tblSo"></tbody></table></div>`;
+  loadSo();
+}
+function addSoItem(){
+  const pid = document.getElementById('so2_product').value;
+  const prod = CACHE.products.find(p=>String(p.id)===String(pid));
+  const qty = parseFloat(document.getElementById('so2_qty').value||0);
+  const price = parseFloat(document.getElementById('so2_price').value||0);
+  if(!prod || qty<=0) return toast('Pick a product and a quantity first.');
+  SO_CART.push({productId: prod.id, name: prod.name, qty, price});
+  renderSoCart();
+}
+function renderSoCart(){
+  document.getElementById('soCart').innerHTML = SO_CART.map((it,i)=>`
+    <div class="cart-item"><span>${esc(it.name)} — ${it.qty} × ${money(it.price)}</span>
+    <button class="btn btn-sm btn-danger" onclick="SO_CART.splice(${i},1);renderSoCart();"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`
+  ).join('') || '<div class="small">No items added yet.</div>';
+}
+async function saveSo(){
+  if(!SO_CART.length) return toast('Add at least one item.');
+  try{
+    await api('so', { customerId: document.getElementById('so2_customer').value || null,
+      delivery: document.getElementById('so2_delivery').value, items: SO_CART });
+    toast('Sales order created.'); SO_CART=[]; renderSoCart(); loadSo();
+  }catch(e){ toast(e.message); }
+}
+async function loadSo(){
+  const r = await api('so');
+  document.getElementById('tblSo').innerHTML = r.so.map(s=>`
+    <tr><td>${esc(s.so_no)}</td><td>${s.date}</td><td>${esc(s.customer_name||'—')}</td><td><span class="badge ${s.status==='Fulfilled'?'b-ok':'b-warn'}">${s.status}</span></td>
+    <td class="actions-cell">${s.status==='Pending'?(iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>','Mark Fulfilled',`markSoFulfilled(${s.id})`)+iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteSo(${s.id})`,true)):'<span class="small">—</span>'}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="small" style="text-align:center;padding:16px;">No sales orders yet.</td></tr>';
+}
+async function markSoFulfilled(id){
+  try{ await api('so/status', {id, status:'Fulfilled'}); toast('Marked fulfilled — stock updated.'); loadSo(); }catch(e){ toast(e.message); }
+}
+async function deleteSo(id){
+  if(!confirm('Delete this sales order?')) return;
+  try{ await api('so/delete', {id}); toast('Deleted.'); loadSo(); }catch(e){ toast(e.message); }
+}
+</script>
+<script>
+/* ============================== POS ============================== */
+let POS_CART = [];
+async function render_pos(){
+  const el = document.getElementById('page-pos');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  if(!CACHE.customers) await api('customers').then(r=>CACHE.customers=r.customers);
+  POS_CART = [];
+  el.innerHTML = `<div class="page-title">Point of Sale</div><div class="page-sub">Scan or pick a product, then ring up the sale.</div>
+    <div class="row">
+      <div class="card" style="flex:2;">
+        <label>Scan barcode or type SKU, then press Enter</label>
+        <input id="pos_scan" placeholder="Scan / type SKU…" onkeydown="if(event.key==='Enter')posScan()">
+        <div class="row" style="margin-top:10px;">
+          <div><label>Or pick a product</label><select id="pos_product">${productOptions()}</select></div>
+          <div><label>Qty</label><input id="pos_qty" type="number" value="1" step="0.01"></div>
+          <div style="display:flex;align-items:flex-end;"><button class="btn btn-outline btn-sm" onclick="posAdd()">+ Add to Cart</button></div>
+        </div>
+      </div>
+      <div class="card" style="flex:1;">
+        <label>Customer (optional)</label><select id="pos_customer"><option value="">Walk-in</option>${(CACHE.customers||[]).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+        <label>Discount</label><input id="pos_discount" type="number" value="0" step="0.01">
+        <label>Payment Method</label><select id="pos_pay"><option>Cash</option><option>Transfer</option><option>Card</option></select>
+      </div>
+    </div>
+    <div class="card"><div id="posCart"></div><div id="posTotal" style="font-weight:700;margin-top:8px;"></div>
+      <button class="btn btn-gold" style="margin-top:10px;" onclick="posCheckout()">Complete Sale</button></div>
+    <div class="card"><div class="page-sub" style="margin:0 0 8px;">Recent Sales</div><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Total</th><th>Cashier</th><th></th></tr></thead><tbody id="tblPos"></tbody></table></div>`;
+  posRenderCart(); loadPosSales();
+}
+function posScan(){
+  const code = document.getElementById('pos_scan').value.trim();
+  document.getElementById('pos_scan').value = '';
+  if(!code) return;
+  const prod = (CACHE.products||[]).find(p=>p.sku===code);
+  if(!prod) return toast('No product found with SKU "'+code+'".');
+  posAddProduct(prod, 1);
+}
+function posAdd(){
+  const pid = document.getElementById('pos_product').value;
+  const prod = CACHE.products.find(p=>String(p.id)===String(pid));
+  const qty = parseFloat(document.getElementById('pos_qty').value||1);
+  if(!prod) return;
+  posAddProduct(prod, qty);
+}
+function posAddProduct(prod, qty){
+  const existing = POS_CART.find(i=>i.productId===prod.id);
+  if(existing) existing.qty += qty;
+  else POS_CART.push({productId: prod.id, name: prod.name, price: prod.price, qty});
+  posRenderCart();
+}
+function posRenderCart(){
+  document.getElementById('posCart').innerHTML = POS_CART.map((it,i)=>`
+    <div class="cart-item"><span>${esc(it.name)} — ${it.qty} × ${money(it.price)}</span>
+    <span>${money(it.qty*it.price)} <button class="btn btn-sm btn-danger" onclick="POS_CART.splice(${i},1);posRenderCart();"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span></div>`
+  ).join('') || '<div class="small">Cart is empty.</div>';
+  const subtotal = POS_CART.reduce((s,i)=>s+i.qty*i.price,0);
+  const discount = parseFloat(document.getElementById('pos_discount')?.value||0);
+  document.getElementById('posTotal').textContent = 'Total: ' + money(Math.max(0,subtotal-discount));
+}
+async function posCheckout(){
+  if(!POS_CART.length) return toast('Cart is empty.');
+  try{
+    const r = await api('pos/sale', { items: POS_CART, discount: document.getElementById('pos_discount').value,
+      customerId: document.getElementById('pos_customer').value || null, paymentMethod: document.getElementById('pos_pay').value });
+    toast('Sale completed — '+r.invoice+' — '+money(r.total));
+    POS_CART = []; posRenderCart(); loadPosSales();
+  }catch(e){ toast(e.message); }
+}
+async function loadPosSales(){
+  const r = await api('pos/sales');
+  const canVoid = ME.accountType==='Admin' || (ME.roles||[]).includes('Store Manager');
+  document.getElementById('tblPos').innerHTML = r.sales.slice(0,30).map(s=>`
+    <tr><td>${esc(s.invoice)}</td><td>${s.date}</td><td>${esc(s.customer_name||'Walk-in')}</td><td>${money(s.total)}</td><td>${esc(s.cashier_name||'—')}</td>
+    <td class="actions-cell">${canVoid?iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>','Void sale (restores stock)',`voidPosSale(${s.id})`,true):''}</td></tr>`
+  ).join('') || '<tr><td colspan="6" class="small" style="text-align:center;padding:16px;">No sales yet.</td></tr>';
+}
+async function voidPosSale(id){
+  if(!confirm('Void this sale? The items will be added back to stock, and this cannot be undone.')) return;
+  try{ await api('pos/sale/void', {id}); toast('Sale voided — stock restored.'); loadPosSales(); }catch(e){ toast(e.message); }
+}
+
+/* ============================== ADJUSTMENTS ============================== */
+async function render_adjustments(){
+  const el = document.getElementById('page-adjustments');
+  if(!CACHE.products) await api('products').then(r=>CACHE.products=r.products);
+  el.innerHTML = `<div class="page-title">Adjustments</div><div class="page-sub">Correct stock for damage, loss, or recounts.</div>
+    <div class="card"><div class="row">
+      <div><label>Product</label><select id="adj_product">${productOptions()}</select></div>
+      <div><label>Type</label><select id="adj_type"><option>Damage</option><option>Loss</option><option>Recount</option><option>Other</option></select></div>
+      <div><label>Qty (use negative to reduce, positive to increase)</label><input id="adj_qty" type="number" step="0.01"></div>
+    </div><label>Reason</label><input id="adj_reason">
+    <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveAdjustment()">Save Adjustment</button></div>
+    <div class="card"><table><thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Qty</th><th>Reason</th><th></th></tr></thead><tbody id="tblAdj"></tbody></table></div>`;
+  loadAdjustments();
+}
+async function loadAdjustments(){
+  const r = await api('adjustments');
+  document.getElementById('tblAdj').innerHTML = r.adjustments.map(a=>`
+    <tr><td>${a.date}</td><td>${esc(a.product_name||'—')}</td><td>${a.type}</td><td>${a.qty}</td><td>${esc(a.reason||'—')}</td>
+    <td class="actions-cell">${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteAdjustment(${a.id})`,true)}</td></tr>`
+  ).join('') || '<tr><td colspan="6" class="small" style="text-align:center;padding:16px;">No adjustments yet.</td></tr>';
+}
+async function deleteAdjustment(id){
+  if(!confirm('Delete this adjustment? This will undo its effect on stock.')) return;
+  try{ await api('adjustments/delete', {id}); toast('Deleted.'); loadAdjustments(); }catch(e){ toast(e.message); }
+}
+async function saveAdjustment(){
+  try{
+    await api('adjustments', { productId: document.getElementById('adj_product').value, type: document.getElementById('adj_type').value,
+      qty: document.getElementById('adj_qty').value, reason: document.getElementById('adj_reason').value });
+    toast('Adjustment saved.'); loadAdjustments();
+  }catch(e){ toast(e.message); }
+}
+</script>
+<script>
+/* ============================== EXPENSES / P&L / REPORTS ============================== */
+async function render_expenses(){
+  const el = document.getElementById('page-expenses');
+  el.innerHTML = `<div class="page-title">Expenses</div><div class="page-sub">Log day-to-day business expenses.</div>
+    <div class="card"><div class="row">
+      <div><label>Date</label><input id="ex_date" type="date" value="${today()}"></div>
+      <div><label>Category</label><input id="ex_cat" value="Other"></div>
+      <div><label>Amount</label><input id="ex_amt" type="number" step="0.01"></div>
+    </div><label>Description</label><input id="ex_desc">
+    <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveExpense()">Save Expense</button></div>
+    <div class="card"><table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody id="tblEx"></tbody></table></div>`;
+  loadExpenses();
+}
+async function loadExpenses(){
+  const r = await api('expenses');
+  document.getElementById('tblEx').innerHTML = r.expenses.map(e=>`
+    <tr><td>${e.date}</td><td>${esc(e.category)}</td><td>${esc(e.description||'—')}</td><td>${money(e.amount)}</td>
+    <td class="actions-cell">${iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteExpense(${e.id})`,true)}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="small" style="text-align:center;padding:16px;">No expenses logged yet.</td></tr>';
+}
+async function deleteExpense(id){
+  if(!confirm('Delete this expense record?')) return;
+  try{ await api('expenses/delete', {id}); toast('Deleted.'); loadExpenses(); }catch(e){ toast(e.message); }
+}
+async function saveExpense(){
+  try{
+    await api('expenses', { date: document.getElementById('ex_date').value, category: document.getElementById('ex_cat').value,
+      description: document.getElementById('ex_desc').value, amount: document.getElementById('ex_amt').value });
+    toast('Expense saved.'); loadExpenses();
+  }catch(e){ toast(e.message); }
+}
+
+async function render_pnl(){
+  const el = document.getElementById('page-pnl');
+  el.innerHTML = `<div class="page-title">Profit &amp; Loss</div><div class="page-sub">
+    <select id="pnl_period" onchange="loadPnl()"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
+    </div>
+    <div class="row" style="align-items:stretch;">
+      <div class="card" style="flex:1;min-width:220px;" id="pnlDonutWrap"></div>
+      <div class="card" style="flex:2;min-width:280px;" id="pnlBox"></div>
+    </div>`;
+  loadPnl();
+}
+async function loadPnl(){
+  const period = document.getElementById('pnl_period').value;
+  const r = await api('pnl?period='+period);
+  const margin = r.revenue>0 ? Math.round((r.netProfit/r.revenue)*100) : 0;
+  document.getElementById('pnlBox').innerHTML = `
+    <table><tbody>
+    <tr><td>Revenue</td><td style="text-align:right;">${money(r.revenue)}</td></tr>
+    <tr><td>Cost of Goods Sold</td><td style="text-align:right;">${money(r.cogs)}</td></tr>
+    <tr><td><b>Gross Profit</b></td><td style="text-align:right;"><b>${money(r.grossProfit)}</b></td></tr>
+    <tr><td>Expenses</td><td style="text-align:right;">${money(r.expenses)}</td></tr>
+    <tr><td><b>Net Profit</b></td><td style="text-align:right;"><b>${money(r.netProfit)}</b></td></tr>
+    <tr><td>Net Margin</td><td style="text-align:right;">${margin}%</td></tr>
+    </tbody></table>`;
+  document.getElementById('pnlDonutWrap').innerHTML = `<div class="page-sub" style="margin:0 0 10px;">Where revenue went</div>
+    <div style="display:flex;justify-content:center;">${svgDonut([
+      {label:'Cost of Goods', value:Math.max(0,r.cogs), color:'var(--ink)'},
+      {label:'Expenses', value:Math.max(0,r.expenses), color:'var(--warn)'},
+      {label:'Net Profit', value:Math.max(0,r.netProfit), color:'var(--ok)'},
+    ], {size:150})}</div>
+    <div style="margin-top:10px;font-size:11.5px;">
+      <div><span style="display:inline-block;width:9px;height:9px;background:var(--ink);border-radius:2px;"></span> Cost of Goods</div>
+      <div style="margin-top:4px;"><span style="display:inline-block;width:9px;height:9px;background:var(--warn);border-radius:2px;"></span> Expenses</div>
+      <div style="margin-top:4px;"><span style="display:inline-block;width:9px;height:9px;background:var(--ok);border-radius:2px;"></span> Net Profit</div>
+    </div>`;
+}
+
+async function render_reports(){
+  const el = document.getElementById('page-reports');
+  el.innerHTML = `<div class="page-title">Reports</div><div class="page-sub">
+    <select id="rep_period" onchange="loadReports()"><option value="daily" selected>Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
+    </div>
+    <div class="card"><div class="page-sub" style="margin:0 0 8px;">Top Products by Revenue</div><div id="reportsChart"></div></div>
+    <div class="card"><table><thead><tr><th>Product</th><th>Qty Sold</th><th>Revenue</th></tr></thead><tbody id="tblReports"></tbody></table>
+    <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="window.print()"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print this report</button></div>`;
+  loadReports();
+}
+async function loadReports(){
+  const period = document.getElementById('rep_period').value;
+  const r = await api('reports?period='+period);
+  document.getElementById('tblReports').innerHTML = r.topProducts.map(p=>`
+    <tr><td>${esc(p.name||'—')}</td><td>${p.qty}</td><td>${money(p.revenue)}</td></tr>`
+  ).join('') || '<tr><td colspan="3" class="small" style="text-align:center;padding:16px;">No sales in this period yet.</td></tr>';
+  const top6 = r.topProducts.slice(0,6).map(p=>({label:(p.name||'—').slice(0,10), value:p.revenue, valueLabel:money(p.revenue)}));
+  document.getElementById('reportsChart').innerHTML = top6.length
+    ? svgBarChart(top6, {height:170, color:'var(--gold)'})
+    : '<div class="small" style="text-align:center;padding:16px;">Nothing to chart yet for this period.</div>';
+}
+</script>
+<script>
+/* ============================== TEAM & ACCESS ============================== */
+const ALL_ROLES = ['Store Manager','Cashier / POS Operator','Procurement Officer','Storekeeper / Warehouse Officer','Inventory Auditor / Viewer'];
+async function render_team(){
+  const el = document.getElementById('page-team');
+  el.innerHTML = `<div class="page-title">Team &amp; Access</div><div class="page-sub">Add staff and control what each person can see.</div>
+    <button class="btn btn-gold btn-sm" onclick="openUserModal()">+ Add Team Member</button>
+    <div class="card" style="margin-top:10px;"><table><thead><tr><th>Username</th><th>Type</th><th>Roles</th><th>Status</th><th></th></tr></thead><tbody id="tblUsers"></tbody></table></div>`;
+  loadUsers();
+}
+async function loadUsers(){
+  const r = await api('users');
+  document.getElementById('tblUsers').innerHTML = r.users.map(u=>`
+    <tr><td>${esc(u.username)}</td><td>${u.accountType}</td><td>${(u.roles||[]).join(', ')||'—'}</td>
+    <td><span class="badge ${u.status==='Active'?'b-ok':'b-danger'}">${u.status}</span></td>
+    <td class="actions-cell">${u.accountType!=='Admin'?(
+      iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>','Edit Roles',`openRolesModal(${JSON.stringify(u).replace(/"/g,'&quot;')})`) +
+      iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg>','Reset Password',`resetPw(${u.id})`) +
+      iconBtn(u.status==='Active'?'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>':'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>', u.status==='Active'?'Suspend':'Reactivate', `toggleStatus(${u.id}, '${u.status==='Active'?'Suspended':'Active'}')`) +
+      iconBtn('<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>','Delete',`deleteUser(${u.id})`,true)
+    ):'<span class="small">—</span>'}</td></tr>`
+  ).join('');
+}
+function openUserModal(){
+  openModal(`<h3>Add Team Member</h3>
+    <label>Username</label><input id="u_username">
+    <label>Full Name</label><input id="u_fullname">
+    <label>Password</label><input id="u_password" type="password">
+    <label>Roles</label>
+    <div>${ALL_ROLES.map(r=>`<label style="display:flex;gap:6px;align-items:center;font-size:12px;"><input type="checkbox" class="u_role" value="${r}"> ${r}</label>`).join('')}</div>
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveUser()">Create</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+async function saveUser(){
+  const roles = [...document.querySelectorAll('.u_role:checked')].map(c=>c.value);
+  try{
+    await api('users', { username: document.getElementById('u_username').value, fullName: document.getElementById('u_fullname').value,
+      password: document.getElementById('u_password').value, roles });
+    closeModal(); toast('Team member added.'); loadUsers();
+  }catch(e){ toast(e.message); }
+}
+function openRolesModal(u){
+  openModal(`<h3>Roles — ${esc(u.username)}</h3>
+    <div>${ALL_ROLES.map(r=>`<label style="display:flex;gap:6px;align-items:center;font-size:12px;"><input type="checkbox" class="ur_role" value="${r}" ${u.roles.includes(r)?'checked':''}> ${r}</label>`).join('')}</div>
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveRoles(${u.id})">Save</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+async function saveRoles(uid){
+  const roles = [...document.querySelectorAll('.ur_role:checked')].map(c=>c.value);
+  try{ await api('users/roles', {userId: uid, roles}); closeModal(); toast('Roles updated.'); loadUsers(); }catch(e){ toast(e.message); }
+}
+async function resetPw(uid){
+  const pw = prompt('New password for this user:');
+  if(!pw) return;
+  try{ await api('users/password', {userId: uid, newPassword: pw}); toast('Password reset.'); }catch(e){ toast(e.message); }
+}
+async function toggleStatus(uid, status){
+  try{ await api('users/status', {userId: uid, status}); toast('Status updated.'); loadUsers(); }catch(e){ toast(e.message); }
+}
+async function deleteUser(uid){
+  if(!confirm('Delete this team member? This cannot be undone.')) return;
+  try{ await api('users/delete', {userId: uid}); toast('Deleted.'); loadUsers(); }catch(e){ toast(e.message); }
+}
+
+/* ============================== MESSAGES / CHAT ============================== */
+async function render_messages(){
+  const el = document.getElementById('page-messages');
+  el.innerHTML = `<div class="page-title">Message Members</div>
+    <div class="page-sub">Internal announcements log — this LAN edition has no internet, so there's no SMS/email/WhatsApp sending; messages are recorded here for your team to see in-app.</div>
+    <div class="card"><div class="row">
+      <div><label>Audience</label><input id="m_audience" placeholder="e.g. All Staff, Customers"></div>
+      <div><label>Recipient</label><input id="m_recipient" placeholder="Name (optional)"></div>
+      <div><label>Type</label><select id="m_type"><option>Announcement</option><option>Reminder</option><option>Other</option></select></div>
+    </div><label>Subject</label><input id="m_subject"><label>Message</label><textarea id="m_body" rows="3"></textarea>
+    <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="sendMsg()">Post Message</button></div>
+    <div class="card"><table><thead><tr><th>Date</th><th>Type</th><th>Audience</th><th>Subject</th></tr></thead><tbody id="tblMsg"></tbody></table></div>`;
+  loadMessages();
+}
+async function loadMessages(){
+  const r = await api('messages');
+  document.getElementById('tblMsg').innerHTML = r.messages.map(m=>`
+    <tr><td>${m.created_at.slice(0,16).replace('T',' ')}</td><td>${esc(m.msg_type)}</td><td>${esc(m.audience||m.recipient_name||'—')}</td><td>${esc(m.subject||'—')}</td></tr>`
+  ).join('') || '<tr><td colspan="4" class="small" style="text-align:center;padding:16px;">No messages yet.</td></tr>';
+}
+async function sendMsg(){
+  try{
+    await api('messages', { audience: document.getElementById('m_audience').value, recipientName: document.getElementById('m_recipient').value,
+      msgType: document.getElementById('m_type').value, subject: document.getElementById('m_subject').value, body: document.getElementById('m_body').value });
+    toast('Posted.'); loadMessages();
+  }catch(e){ toast(e.message); }
+}
+
+let CHAT_WITH = 0;      // 0 = the "Everyone" broadcast channel, open by default
+let CHAT_WITH_NAME = 'Everyone';
+async function render_chat(){
+  const el = document.getElementById('page-chat');
+  const r = await api('users');
+  const others = r.users.filter(u=>u.id!==ME.id);
+  el.innerHTML = `<div class="page-title">Team Chat</div><div class="page-sub">Message the whole team at once, or a teammate directly.</div>
+    <div class="row">
+    <div class="card" style="flex:1;max-width:220px;"><div class="page-sub" style="margin:0 0 8px;">Chats</div>
+      <div id="chat_nav_0" class="chat-nav-item" style="padding:6px;cursor:pointer;font-weight:700;" onclick="openChat(0,'Everyone')"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a5 5 0 0 1 0 8M18 5a9 9 0 0 1 0 14"/></svg> Everyone</div>
+      ${others.map(u=>`<div id="chat_nav_${u.id}" class="chat-nav-item" style="padding:6px;cursor:pointer;" onclick="openChat(${u.id},'${esc(u.username)}')"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg> ${esc(u.username)}</div>`).join('') || '<div class="small">No other team members yet.</div>'}
+    </div>
+    <div class="card" style="flex:2;">
+      <div id="chatHeader" class="small">Loading…</div>
+      <div id="chatThread" style="max-height:320px;overflow:auto;margin:10px 0;"></div>
+      <div style="display:flex;gap:8px;"><input id="chatInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendChat()"><button class="btn btn-gold btn-sm" onclick="sendChat()">Send</button></div>
+    </div></div>`;
+  openChat(0, 'Everyone');
+}
+async function openChat(uid, uname){
+  CHAT_WITH = uid; CHAT_WITH_NAME = uname;
+  document.querySelectorAll('.chat-nav-item').forEach(el=>el.style.background='');
+  const navEl = document.getElementById('chat_nav_'+uid);
+  if(navEl) navEl.style.background = 'var(--cream)';
+  document.getElementById('chatHeader').innerHTML = uid===0
+    ? '<b><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a5 5 0 0 1 0 8M18 5a9 9 0 0 1 0 14"/></svg> Everyone</b> — visible to the whole team'
+    : '<b><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg> ' + esc(uname) + '</b> — private message';
+  const r = await api('chat?with='+uid);
+  document.getElementById('chatThread').innerHTML = r.messages.map(m=>`
+    <div class="cart-item" style="border:none;"><b>${m.from_user===ME.id?'You':esc(m.from_name)}:</b> ${esc(m.message)}
+    <span class="small"> — ${m.created_at.slice(11,16)}</span></div>`
+  ).join('') || '<div class="small">No messages yet — say hello!</div>';
+  document.getElementById('chatThread').scrollTop = 1e9;
+}
+async function sendChat(){
+  const msg = document.getElementById('chatInput').value.trim();
+  if(!msg) return;
+  document.getElementById('chatInput').value = '';
+  try{ await api('chat', {toUserId: CHAT_WITH, message: msg}); openChat(CHAT_WITH, CHAT_WITH_NAME); }catch(e){ toast(e.message); }
+}
+
+/* ============================== SETTINGS / BACKUP ============================== */
+async function render_settings(){
+  const el = document.getElementById('page-settings');
+  const s = (await api('settings')).settings;
+  CACHE.settings = s;
+  const isAdmin = ME.accountType==='Admin';
+  el.innerHTML = `<div class="page-title">Settings</div><div class="page-sub">Your password${isAdmin?', and company setup':''}.</div>
+    <div class="card"><div class="page-sub" style="margin:0 0 8px;">Change Password</div>
+      <label>Current Password</label><input id="cp_old" type="password">
+      <label>New Password</label><input id="cp_new" type="password">
+      <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="changePw()">Update Password</button></div>
+    ${isAdmin?`<div class="card"><div class="page-sub" style="margin:0 0 8px;">Company Settings</div>
+      <label>Company Name</label><input id="st_name" value="${esc(s.companyName||'')}">
+      <label>Currency Symbol</label><input id="st_currency" value="${esc(s.currencySymbol||'')}">
+      <label>Address</label><input id="st_address" value="${esc(s.address||'')}">
+      <label>Phone</label><input id="st_phone" value="${esc(s.phone||'')}">
+      <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveSettings()">Save Settings</button></div>
+    <div class="card"><div class="page-sub" style="margin:0 0 8px;">Licensing Link</div>
+      <p class="small">Where the Activate page sends people to pay and submit proof of payment.</p>
+      <label>Pricing Page URL</label><input id="st_pricingurl" value="${esc(s.pricingPageUrl||'')}">
+      <button class="btn btn-gold btn-sm" style="margin-top:10px;" onclick="saveLicensingLinks()">Save</button></div>`:''}`;
+  loadServerCard();
+}
+async function saveLicensingLinks(){
+  try{
+    await api('settings', { pricingPageUrl: document.getElementById('st_pricingurl').value });
+    toast('Saved.');
+  }catch(e){ toast(e.message); }
+}
+async function loadServerCard(){
+  if(ME.accountType!=='Admin') return;
+  const pane=document.getElementById('page-settings'); if(!pane) return;
+  const old=document.getElementById('serverCard'); if(old) old.remove();
+  let st; try{ st=(await api('server/status')).status; }catch(e){ return; }
+  pane.insertAdjacentHTML('beforeend', `<div class="card" id="serverCard"><div class="page-sub" style="margin:0 0 8px;">Server</div>
+    <p class="small">The server keeps running in the background after its window is closed. Data folder: ${esc(st.dataDir)}</p>
+    ${st.autostartSupported ? `<label style="display:flex;gap:8px;align-items:center;margin-top:8px;"><input type="checkbox" id="srvAuto" ${st.autostart?'checked':''} onchange="setAutostart(this.checked)"> Start OKV IMS automatically when Windows starts</label>` : `<p class="small">Starting at sign-in is available on Windows only.</p>`}
+    <button class="btn btn-sm" style="margin-top:12px;color:var(--danger);" onclick="stopServer()">Stop the server now</button></div>`);
+}
+async function setAutostart(on){
+  try{ await api('server/autostart',{enabled:on}); toast(on?'OKV IMS will start when Windows starts.':'Automatic start is turned off.'); }
+  catch(e){ toast(e.message); const b=document.getElementById('srvAuto'); if(b) b.checked=!on; }
+}
+async function stopServer(){
+  if(!confirm('Stop the OKV IMS server now? Other devices lose access until it is started again.')) return;
+  try{
+    await api('server/stop',{});
+    document.getElementById('app').innerHTML='<div class="card" style="margin:40px auto;max-width:460px;text-align:center;"><h3>The server has stopped</h3><p>Start OKV IMS again from the Start menu, then reload this page.</p></div>';
+  }catch(e){ toast(e.message); }
+}
+async function changePw(){
+  try{
+    await api('change_password', {oldPassword: document.getElementById('cp_old').value, newPassword: document.getElementById('cp_new').value});
+    toast('Password updated.');
+  }catch(e){ toast(e.message); }
+}
+async function saveSettings(){
+  try{
+    await api('settings', { companyName: document.getElementById('st_name').value, currencySymbol: document.getElementById('st_currency').value,
+      address: document.getElementById('st_address').value, phone: document.getElementById('st_phone').value });
+    toast('Settings saved.'); CACHE.settings = await (await api('settings')).settings;
+  }catch(e){ toast(e.message); }
+}
+/* ============================== ACTIVATE / LICENSE ============================== */
+async function render_activate(){
+  const el = document.getElementById('page-activate');
+  const lic = await api('license');
+  CACHE.license = lic;
+  const s = await api('settings');
+  const pricingUrl = s.settings.pricingPageUrl || 'https://www.okvtechnology.com/okvinms/pricing.html';
+  el.innerHTML = `<div class="page-title">Activate OKV IMS</div>
+    <div class="page-sub">One-time payment of ${money(lic.onceOffPrice)} — pay once, use forever. No subscriptions.</div>
+    <div class="card">
+      <div class="row">
+        <div><div class="small">STATUS</div><div style="font-weight:700;">${lic.active?'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Activated':(lic.expired?'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Trial Expired':'<svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12M6 22h12M7 2c0 5 10 5 10 10S7 17 7 22M17 2c0 5-10 5-10 10s10 5 10 10"/></svg> Trial — '+lic.daysRemaining+' day(s) left')}</div></div>
+        <div><div class="small">TRIAL LENGTH</div><div style="font-weight:700;">${lic.trialDays} days</div></div>
+        <div><div class="small">ONE-TIME PRICE</div><div style="font-weight:700;">${money(lic.onceOffPrice)}</div></div>
+      </div>
+    </div>
+    ${lic.active ? `<div class="card"><p><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> This installation is fully activated. Thank you for your purchase!</p></div>` : `
+    <div class="card">
+      <strong>How to activate</strong>
+      <ol style="font-size:12.5px;color:var(--ink-2);">
+        <li>Visit the OKV IMS pricing page and complete your one-time payment.</li>
+        <li>Submit your payment proof there — it only takes a minute.</li>
+        <li>OKV Technology Consults reviews it and emails your activation code and licence key — usually within 24 hours.</li>
+        <li>Paste the code into the box below — activation is instant and needs no internet connection at that point.</li>
+      </ol>
+      <a class="btn btn-gold btn-sm" href="${pricingUrl}" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Go to Pricing Page to Pay &amp; Submit Proof</a>
+      <p class="small" style="margin-top:8px;">Opens in your browser — this computer needs internet access for that step only. Rather pay by direct bank transfer or talk to someone first? Contact OKV Technology Consults: technologyokv@gmail.com · +234 810 414 1138 (call/WhatsApp).</p>
+    </div>
+    <div class="card">
+      <strong>Already have your activation code and licence key?</strong>
+      <div class="row" style="margin-top:6px;">
+        <div style="flex:2;"><input id="ac_code" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"></div>
+        <div style="display:flex;align-items:flex-end;"><button class="btn btn-gold btn-sm" onclick="activateWithCode()">Activate</button></div>
+      </div>
+    </div>`}`;
+}
+async function activateWithCode(){
+  const code = document.getElementById('ac_code').value;
+  try{
+    await api('license/activate', {code});
+    toast(' Activated! Thank you.');
+    renderTrialBanner(); render_activate();
+  }catch(e){ toast(e.message); }
+}
+
+/* ============================== USER MANUAL ============================== */
+function render_manual(){
+  const el = document.getElementById('page-manual');
+  const isAdmin = ME.accountType==='Admin';
+  const roleLabel = isAdmin ? 'Admin' : ((ME.roles||[])[0] || 'Staff');
+  el.innerHTML = `<div class="page-title">User Manual</div>
+    <div class="page-sub">A quick-reference guide for your role: ${esc(roleLabel)}.</div>
+    <div class="card">
+      <p>Your role-specific manual (PDF) is provided by OKV Technology Consults alongside your installation files.</p>
+      <p class="small">If you don't have a copy, contact technologyokv@gmail.com / +234 810 414 1138 and one will be sent to you.</p>
+    </div>`;
+}
+
+async function render_backup(){
+  const el = document.getElementById('page-backup');
+  const info = await api('backup');
+  const sizeMb = (info.sizeBytes/1024/1024).toFixed(2);
+  el.innerHTML = `<div class="page-title">Backup</div><div class="page-sub">Your entire database is one file — back it up regularly, especially before closing for the day.</div>
+    <div class="card">
+      <p><b>Database file:</b> ${esc(info.dbFile)}</p>
+      <p><b>Current size:</b> ${sizeMb} MB</p>
+      <a class="btn btn-gold btn-sm" href="#"><svg class="ico" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg> Download Backup Now</a>
+      <p class="small" style="margin-top:10px;">Tip: copy this file to a USB drive or cloud folder on a schedule — restoring is just replacing the file and restarting the server.</p>
+    </div>`;
+}
+</script>
+<script>
+/* ===================================================================================
+   OKV IMS — LAN Edition · DEMO ENGINE
+   This page runs the complete application. Every request the app would send to its
+   server is answered here, in the browser, using the same rules as the real server
+   (stock = stock in − stock out − sales + adjustments, one invoice number per sale,
+   SKU uniqueness, CSV checks, and so on). Nothing is sent over the network, and data
+   lasts until the page is reloaded.
+   =================================================================================== */
+const DEMO_SPECS = {"products": {"label": "Products", "columns": [{"name": "sku", "required": false, "help": "Barcode or SKU. Must be unique. Leave blank if the product has none."}, {"name": "name", "required": true, "help": "Product name. Required."}, {"name": "category", "required": false, "help": "Category name, e.g. Groceries."}, {"name": "unit", "required": false, "help": "Unit of sale, e.g. pcs, bag, can. Default: pcs."}, {"name": "cost", "required": false, "help": "Cost price per unit, a number. Default 0."}, {"name": "price", "required": false, "help": "Selling price per unit, a number. Default 0."}, {"name": "reorderLevel", "required": false, "help": "Alert when stock falls to this number or lower. Default 0."}, {"name": "openingStock", "required": false, "help": "Starting stock quantity. Creates one Stock In record. Default 0."}], "example": [["RICE50", "Rice 50kg", "Groceries", "bag", "30000", "35000", "10", "40"]]}, "customers": {"label": "Customers", "columns": [{"name": "name", "required": true, "help": "Customer name. Required."}, {"name": "phone", "required": false, "help": "Phone number."}, {"name": "email", "required": false, "help": "Email address."}, {"name": "address", "required": false, "help": "Address or town."}], "example": [["Mama Ngozi Store", "08055556666", "ngozi@store.ng", "Onitsha"]]}, "suppliers": {"label": "Suppliers", "columns": [{"name": "name", "required": true, "help": "Supplier name. Required."}, {"name": "phone", "required": false, "help": "Phone number."}, {"name": "email", "required": false, "help": "Email address."}, {"name": "address", "required": false, "help": "Address or town."}], "example": [["ABC Distributors", "08011112222", "sales@abcdist.ng", "Lagos"]]}, "expenses": {"label": "Expenses", "columns": [{"name": "date", "required": true, "help": "Date in YYYY-MM-DD format, e.g. 2026-10-08."}, {"name": "category", "required": false, "help": "Expense category, e.g. Rent, Transport. Default: Other."}, {"name": "description", "required": false, "help": "What the expense was for."}, {"name": "amount", "required": true, "help": "Amount spent, a number greater than 0."}], "example": [["2026-10-01", "Rent", "October shop rent", "150000"]]}, "stockin": {"label": "Stock In", "columns": [{"name": "date", "required": true, "help": "Date received, YYYY-MM-DD."}, {"name": "productSku", "required": true, "help": "SKU/barcode of a product that already exists. Import Products first."}, {"name": "qty", "required": true, "help": "Quantity received, a number greater than 0."}, {"name": "unitCost", "required": false, "help": "Cost per unit. Default 0."}, {"name": "grn", "required": false, "help": "Goods received note / delivery reference."}, {"name": "supplierName", "required": false, "help": "Supplier name. Must match an existing supplier, or leave blank."}], "example": [["2026-10-01", "RICE50", "40", "30000", "GRN-221", "ABC Distributors"]]}, "batches": {"label": "Batch & Expiry", "columns": [{"name": "productSku", "required": true, "help": "SKU/barcode of a product that already exists."}, {"name": "batchNo", "required": false, "help": "Batch number from the manufacturer."}, {"name": "expiryDate", "required": false, "help": "Expiry date, YYYY-MM-DD."}, {"name": "qty", "required": false, "help": "Quantity in this batch. Default 0."}], "example": [["RICE50", "B2026-04", "2027-06-30", "40"]]}};
+
+const DEMO = (function () {
+  const T = new Date();
+  const ago = n => { const d = new Date(T); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); };
+  const ahead = n => { const d = new Date(T); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+  const nowIso = () => new Date().toISOString().slice(0, 19);
+  const today = () => new Date().toISOString().slice(0, 10);
+  let seq = 100;
+  const nid = () => ++seq;
+  const num = (v, d) => { const s = String(v == null ? '' : v).trim().replace(/,/g, ''); if (s === '') return d === undefined ? 0 : d; const n = Number(s); if (isNaN(n)) throw new Error('"' + s + '" is not a number'); return n; };
+  const live = arr => arr.filter(x => !x.deleted);
+  const sum = (arr, f) => arr.reduce((s, x) => s + (Number(f(x)) || 0), 0);
+
+  const db = {
+    settings: { companyName: 'Demo Shop Ltd', currencySymbol: 'NGN', address: '12 Market Road, Lagos', phone: '08000000000', pricingPageUrl: 'https://www.okvtechnology.com/okvinms/pricing.html' },
+    license: { active: false, trialDays: 12, installedAt: ago(0) },
+    users: [
+      { id: 1, username: 'admin', password: 'admin123', accountType: 'Admin', roles: [], status: 'Active', fullName: 'Demo Admin' },
+      { id: 2, username: 'amaka', password: 'pass1234', accountType: 'User', roles: ['Cashier / POS Operator'], status: 'Active', fullName: 'Amaka' },
+      { id: 3, username: 'tunde', password: 'pass1234', accountType: 'User', roles: ['Storekeeper / Warehouse Officer'], status: 'Active', fullName: 'Tunde' },
+    ],
+    categories: ['Groceries', 'Toiletries'],
+    products: [], suppliers: [], customers: [], stockin: [], stockout: [], pos: [], adjustments: [], expenses: [],
+    batches: [], po: [], so: [], messages: [], chat: [],
+  };
+  let CURRENT = null;
+
+  function addProduct(sku, name, category, unit, cost, price, reorder) {
+    const p = { id: nid(), sku, name, category, unit, cost, price, reorder_level: reorder, photo: '', created_at: nowIso(), updated_at: nowIso(), deleted: 0 };
+    db.products.push(p); return p;
+  }
+  function stockIn(pid, qty, unitCost, date, grn, supplierId) {
+    db.stockin.push({ id: nid(), date, grn, supplier_id: supplierId || null, product_id: pid, qty, unit_cost: unitCost, total: qty * unitCost });
+  }
+  function stockOut(pid, qty, price, date, ref, customerId) {
+    const cost = (P(pid) || { cost: 0 }).cost * qty;
+    db.stockout.push({ id: nid(), date, ref, customer_id: customerId || null, product_id: pid, qty, price, revenue: qty * price, cogs: cost, profit: qty * price - cost });
+  }
+  function posSale(items, date, customerId, cashier, payment) {
+    const lines = items.map(i => ({ product_id: i.pid, qty: i.qty, price: i.price, cost: (P(i.pid) || { cost: 0 }).cost, total: i.qty * i.price }));
+    const total = sum(lines, l => l.total);
+    const s = { id: nid(), invoice: 'INV-' + String(seq).padStart(6, '0'), date, customer_id: customerId || null, subtotal: total, discount: 0, total, payment_method: payment || 'Cash', cashier_id: cashier, items: lines };
+    db.pos.push(s); return s;
+  }
+  function P(id) { return db.products.find(p => p.id === Number(id) && !p.deleted); }
+  function C(id) { return db.customers.find(c => c.id === Number(id) && !c.deleted); }
+  function S(id) { return db.suppliers.find(c => c.id === Number(id) && !c.deleted); }
+  function U(id) { return db.users.find(u => u.id === Number(id)); }
+  function stockOf(pid) {
+    return sum(db.stockin.filter(x => x.product_id === pid), x => x.qty)
+      - sum(db.stockout.filter(x => x.product_id === pid), x => x.qty)
+      - sum(db.pos.flatMap(s => s.items).filter(x => x.product_id === pid), x => x.qty)
+      + sum(db.adjustments.filter(x => x.product_id === pid), x => x.qty);
+  }
+  function publicUser(u) { return u ? { id: u.id, username: u.username, accountType: u.accountType, roles: u.roles, fullName: u.fullName, status: u.status } : null; }
+
+  /* ---------- seed: a believable shop, with dates relative to today ---------- */
+  (function seed() {
+    const rice = addProduct('RICE50', 'Rice 50kg', 'Groceries', 'bag', 30000, 35000, 10);
+    const soap = addProduct('SOAP1', 'Bar Soap', 'Toiletries', 'pcs', 200, 300, 30);
+    const sugar = addProduct('SUGAR1', 'Sugar 1kg', 'Groceries', 'pcs', 800, 1050, 20);
+    const oil = addProduct('OIL5L', 'Vegetable Oil 5L', 'Groceries', 'can', 7200, 8500, 8);
+    const milk = addProduct('MILK01', 'Powdered Milk 400g', 'Groceries', 'tin', 2600, 3200, 15);
+    const det = addProduct('DETERG1', 'Detergent 1kg', 'Toiletries', 'pack', 1500, 1950, 12);
+    db.suppliers.push({ id: nid(), name: 'ABC Distributors', phone: '08011112222', email: 'sales@abcdist.ng', address: 'Lagos', created_at: nowIso(), deleted: 0 });
+    db.suppliers.push({ id: nid(), name: 'Greenfield Wholesale', phone: '08033334444', email: 'orders@greenfield.ng', address: 'Ibadan', created_at: nowIso(), deleted: 0 });
+    db.customers.push({ id: nid(), name: 'Mama Ngozi Store', phone: '08055556666', email: 'ngozi@store.ng', address: 'Onitsha', created_at: nowIso(), deleted: 0 });
+    db.customers.push({ id: nid(), name: 'Bright Future Supermarket', phone: '08077778888', email: '', address: 'Abuja', created_at: nowIso(), deleted: 0 });
+    const [abc, green] = [db.suppliers[0].id, db.suppliers[1].id];
+    const [mama, bright] = [db.customers[0].id, db.customers[1].id];
+    stockIn(rice.id, 60, 30000, ago(6), 'GRN-221', abc);
+    stockIn(soap.id, 260, 200, ago(6), 'GRN-222', abc);
+    stockIn(sugar.id, 100, 800, ago(6), 'GRN-223', green);
+    stockIn(oil.id, 19, 7200, ago(6), 'GRN-224', green);
+    stockIn(milk.id, 25, 2600, ago(6), 'GRN-225', abc);
+    stockIn(det.id, 48, 1500, ago(6), 'GRN-226', green);
+    stockOut(sugar.id, 16, 1050, ago(2), 'SO-000029', bright);
+    stockOut(rice.id, 20, 35000, ago(3), 'SO-000028', bright);
+    posSale([{ pid: rice.id, qty: 2, price: 35000 }], ago(0), null, 2, 'Cash');
+    posSale([{ pid: soap.id, qty: 5, price: 300 }, { pid: det.id, qty: 1, price: 1950 }], ago(1), mama, 2, 'Transfer');
+    posSale([{ pid: sugar.id, qty: 10, price: 1050 }], ago(4), null, 2, 'Cash');
+    db.adjustments.push({ id: nid(), date: ago(2), product_id: milk.id, qty: -3, type: 'Damage', reason: 'Water damage in storeroom', created_at: nowIso() });
+    db.expenses.push({ id: nid(), date: ago(8), category: 'Rent', description: 'Shop rent', amount: 150000, created_at: nowIso() });
+    db.expenses.push({ id: nid(), date: ago(7), category: 'Transport', description: 'Delivery van fuel', amount: 12000, created_at: nowIso() });
+    db.batches.push({ id: nid(), product_id: milk.id, batch_no: 'B2026-04', expiry_date: ahead(24), qty: 22, created_at: nowIso() });
+    db.batches.push({ id: nid(), product_id: oil.id, batch_no: 'B2026-07', expiry_date: ahead(170), qty: 19, created_at: nowIso() });
+    db.po.push({ id: nid(), po_no: 'PO-000014', date: ago(1), supplier_id: abc, expected: ahead(5), status: 'Pending', items: [{ product_id: rice.id, qty: 40, cost: 30000, total: 1200000 }] });
+    db.po.push({ id: nid(), po_no: 'PO-000013', date: ago(7), supplier_id: green, expected: ago(5), status: 'Fulfilled', items: [{ product_id: oil.id, qty: 30, cost: 7200, total: 216000 }] });
+    db.so.push({ id: nid(), so_no: 'SO-000031', date: ago(0), customer_id: bright, delivery: ahead(2), status: 'Pending', items: [{ product_id: sugar.id, qty: 50, price: 1050, total: 52500 }] });
+    db.messages.push({ id: nid(), audience: 'All staff', recipient_name: '', msg_type: 'Announcement', subject: 'New stock-take schedule', body: 'Stock take this Saturday, 8am.', sent_by: 1, created_at: nowIso() });
+    db.chat.push({ id: nid(), from_user: 1, to_user: 0, message: 'Stock take this Saturday morning, please be in by 8am.', created_at: nowIso() });
+    db.chat.push({ id: nid(), from_user: 2, to_user: 0, message: 'Noted, I will be there.', created_at: nowIso() });
+    db.chat.push({ id: nid(), from_user: 2, to_user: 1, message: 'Till 1 is ready for the morning.', created_at: nowIso() });
+  })();
+
+  /* ---------- photos ---------- */
+  function photoOf(id) { const p = db.products.find(x => x.id === Number(id)); return p ? (p.photo || '') : ''; }
+  function prodView(p) {
+    return { id: p.id, sku: p.sku, name: p.name, category: p.category, unit: p.unit, cost: p.cost, price: p.price, reorder_level: p.reorder_level, created_at: p.created_at, updated_at: p.updated_at, deleted: 0, has_image: p.photo ? 1 : 0 };
+  }
+
+  /* ---------- reports ---------- */
+  function inRange(d, period) {
+    const t = today(), dt = new Date(d + 'T00:00:00');
+    const now = new Date(t + 'T00:00:00');
+    if (period === 'daily') return d === t;
+    if (period === 'weekly') { const s = new Date(now); s.setDate(now.getDate() - ((now.getDay() + 6) % 7)); return dt >= s && dt <= now; }
+    if (period === 'monthly') return d.slice(0, 7) === t.slice(0, 7);
+    if (period === 'yearly') return d.slice(0, 4) === t.slice(0, 4);
+    return d.slice(0, 7) === t.slice(0, 7);
+  }
+  function salesRevenue(period) {
+    return sum(db.pos.filter(s => inRange(s.date, period)), s => s.total) + sum(db.stockout.filter(x => inRange(x.date, period)), x => x.revenue);
+  }
+  function dashboard() {
+    const monthPos = sum(db.pos.filter(s => inRange(s.date, 'monthly')), s => s.total);
+    const monthSo = sum(db.stockout.filter(x => inRange(x.date, 'monthly')), x => x.revenue);
+    const todays = db.pos.filter(s => s.date === today());
+    const inv = db.products.filter(p => !p.deleted).map(p => ({ p, stock: stockOf(p.id) }));
+    return {
+      ok: 1, monthSales: monthPos + monthSo,
+      monthExpenses: sum(db.expenses.filter(e => inRange(e.date, 'monthly')), e => e.amount),
+      todaySales: sum(todays, s => s.total), todaySalesCount: todays.length,
+      productCount: live(db.products).length,
+      lowStockCount: inv.filter(x => x.stock <= (x.p.reorder_level || 0)).length,
+      customerCount: live(db.customers).length, supplierCount: live(db.suppliers).length,
+      teamCount: db.users.filter(u => u.status === 'Active').length,
+      pendingPO: db.po.filter(p => p.status === 'Pending').length, pendingSO: db.so.filter(s => s.status === 'Pending').length,
+      totalStockValue: sum(inv, x => x.stock * x.p.cost),
+    };
+  }
+  function trend() {
+    const days = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(T); d.setDate(d.getDate() - i); const k = d.toISOString().slice(0, 10);
+      const v = sum(db.pos.filter(s => s.date === k), s => s.total) + sum(db.stockout.filter(x => x.date === k), x => x.revenue);
+      days.push({ date: k, label: k.slice(5), sales: v });
+    }
+    return { ok: 1, days };
+  }
+  function pnl(period) {
+    const posItems = db.pos.filter(s => inRange(s.date, period)).flatMap(s => s.items);
+    const so = db.stockout.filter(x => inRange(x.date, period));
+    const revenue = salesRevenue(period);
+    const cogs = sum(posItems, i => i.cost * i.qty) + sum(so, x => x.cogs);
+    const expenses = sum(db.expenses.filter(e => inRange(e.date, period)), e => e.amount);
+    return { ok: 1, period, revenue, cogs, grossProfit: revenue - cogs, expenses, netProfit: revenue - cogs - expenses };
+  }
+  function reports(period) {
+    const acc = {};
+    const add = (pid, qty, rev) => { const p = P(pid); if (!p) return; acc[pid] = acc[pid] || { name: p.name, qty: 0, revenue: 0 }; acc[pid].qty += qty; acc[pid].revenue += rev; };
+    db.pos.filter(s => inRange(s.date, period)).forEach(s => s.items.forEach(i => add(i.product_id, i.qty, i.total)));
+    db.stockout.filter(x => inRange(x.date, period)).forEach(x => add(x.product_id, x.qty, x.revenue));
+    return { ok: 1, period, topProducts: Object.values(acc).sort((a, b) => b.revenue - a.revenue) };
+  }
+
+  /* ---------- CSV import rules (same checks as the server) ---------- */
+  function validDate(v) { if (!v) return null; if (!/^\d{4}-\d{2}-\d{2}$/.test(v) || isNaN(new Date(v + 'T00:00:00'))) throw new Error('date "' + v + '" is not valid — use YYYY-MM-DD, e.g. 2026-10-08'); return v; }
+  function prepare(entity, r, seenSku) {
+    const g = k => (r[k] == null ? '' : String(r[k]).trim());
+    if (entity === 'products') {
+      if (!g('name')) throw new Error('name is required');
+      const sku = g('sku') || null;
+      if (sku && (live(db.products).some(p => p.sku === sku) || seenSku.has(sku))) throw new Error('SKU "' + sku + '" already exists');
+      if (!sku && live(db.products).some(p => p.name === g('name'))) throw new Error('a product named "' + g('name') + '" already exists (add a SKU to import it as a separate item)');
+      const cost = num(g('cost')), opening = num(g('openingStock'), 0);
+      if (sku) seenSku.add(sku);
+      return () => { const p = addProduct(sku, g('name'), g('category'), g('unit') || 'pcs', cost, num(g('price')), num(g('reorderLevel'))); if (opening > 0) stockIn(p.id, opening, cost, today(), 'OPENING-STOCK', null); };
+    }
+    if (entity === 'customers' || entity === 'suppliers') {
+      if (!g('name')) throw new Error('name is required');
+      return () => db[entity].push({ id: nid(), name: g('name'), phone: g('phone'), email: g('email'), address: g('address'), created_at: nowIso(), deleted: 0 });
+    }
+    if (entity === 'expenses') {
+      const amount = num(g('amount')); if (amount <= 0) throw new Error('amount must be greater than 0');
+      const d = validDate(g('date')); if (!d) throw new Error('date is required');
+      return () => db.expenses.push({ id: nid(), date: d, category: g('category') || 'Other', description: g('description'), amount, created_at: nowIso() });
+    }
+    if (entity === 'stockin') {
+      const p = live(db.products).find(x => x.sku === g('productSku'));
+      if (!p) throw new Error('no product with SKU "' + g('productSku') + '" — import Products first');
+      const qty = num(g('qty')); if (qty <= 0) throw new Error('qty must be greater than 0');
+      const d = validDate(g('date')); if (!d) throw new Error('date is required');
+      let sid = null; if (g('supplierName')) { const s = live(db.suppliers).find(x => x.name === g('supplierName')); if (!s) throw new Error('no supplier named "' + g('supplierName') + '"'); sid = s.id; }
+      const uc = num(g('unitCost'));
+      return () => stockIn(p.id, qty, uc, d, g('grn'), sid);
+    }
+    if (entity === 'batches') {
+      const p = live(db.products).find(x => x.sku === g('productSku'));
+      if (!p) throw new Error('no product with SKU "' + g('productSku') + '" — import Products first');
+      const ed = validDate(g('expiryDate'));
+      return () => db.batches.push({ id: nid(), product_id: p.id, batch_no: g('batchNo'), expiry_date: ed, qty: num(g('qty')), created_at: nowIso() });
+    }
+    throw new Error('unknown import type');
+  }
+  function parseCsv(text) {
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    const rows = []; let row = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === ',') { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+      else cell += ch;
+    }
+    if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+  function importCsv(entity, text, dryRun) {
+    const spec = DEMO_SPECS[entity]; if (!spec) throw new Error('Unknown import type.');
+    const rows = parseCsv(text);
+    const head = (rows.shift() || []).map(h => h.trim());
+    if (!head.length || (head.length === 1 && head[0] === '')) throw new Error('The file looks empty. Download the template and fill it in.');
+    const missing = spec.columns.filter(c => c.required && !head.includes(c.name)).map(c => c.name);
+    if (missing.length) throw new Error('Missing required column(s): ' + missing.join(', ') + '. Download the template to see the correct headers.');
+    const seen = new Set(); const errors = []; const applies = []; let valid = 0;
+    rows.forEach((cells, idx) => {
+      if (cells.every(c => !String(c).trim())) return;
+      const r = {}; head.forEach((h, i) => r[h] = cells[i]);
+      try { applies.push(prepare(entity, r, seen)); valid++; }
+      catch (e) { errors.push({ row: idx + 2, reason: e.message }); }
+    });
+    if (!dryRun) applies.forEach(a => a());
+    return { ok: 1, dryRun, valid, errors: errors.slice(0, 200), errorCount: errors.length, imported: dryRun ? 0 : valid };
+  }
+
+  /* ---------- exports ---------- */
+  const EXP = {
+    products: { label: 'Products', cols: ['id', 'sku', 'name', 'category', 'unit', 'cost', 'price', 'reorder_level'], rows: () => live(db.products).sort((a, b) => a.name.localeCompare(b.name)).map(p => [p.id, p.sku, p.name, p.category, p.unit, p.cost, p.price, p.reorder_level]) },
+    inventory: { label: 'Inventory', cols: ['id', 'sku', 'name', 'category', 'unit', 'cost', 'price', 'reorder_level', 'stock', 'stock_value', 'status'], rows: () => live(db.products).map(p => { const st = stockOf(p.id); return [p.id, p.sku, p.name, p.category, p.unit, p.cost, p.price, p.reorder_level, st, st * p.cost, st <= (p.reorder_level || 0) ? 'Low stock' : 'OK']; }) },
+    customers: { label: 'Customers', cols: ['id', 'name', 'phone', 'email', 'address'], rows: () => live(db.customers).map(c => [c.id, c.name, c.phone, c.email, c.address]) },
+    suppliers: { label: 'Suppliers', cols: ['id', 'name', 'phone', 'email', 'address'], rows: () => live(db.suppliers).map(c => [c.id, c.name, c.phone, c.email, c.address]) },
+    stockin: { label: 'Stock In', cols: ['id', 'date', 'grn', 'sku', 'product', 'qty', 'unit_cost', 'total'], rows: () => db.stockin.map(x => [x.id, x.date, x.grn, (P(x.product_id) || {}).sku, (P(x.product_id) || {}).name, x.qty, x.unit_cost, x.total]) },
+    stockout: { label: 'Stock Out', cols: ['id', 'date', 'ref', 'sku', 'product', 'qty', 'price', 'revenue', 'cogs', 'profit'], rows: () => db.stockout.map(x => [x.id, x.date, x.ref, (P(x.product_id) || {}).sku, (P(x.product_id) || {}).name, x.qty, x.price, x.revenue, x.cogs, x.profit]) },
+    pos: { label: 'POS Sales', cols: ['id', 'invoice', 'date', 'customer', 'subtotal', 'discount', 'total', 'payment_method', 'cashier'], rows: () => db.pos.map(s => [s.id, s.invoice, s.date, (C(s.customer_id) || { name: 'Walk-in' }).name, s.subtotal, s.discount, s.total, s.payment_method, (U(s.cashier_id) || {}).username]) },
+    adjustments: { label: 'Adjustments', cols: ['id', 'date', 'sku', 'product', 'type', 'qty', 'reason'], rows: () => db.adjustments.map(x => [x.id, x.date, (P(x.product_id) || {}).sku, (P(x.product_id) || {}).name, x.type, x.qty, x.reason]) },
+    expenses: { label: 'Expenses', cols: ['id', 'date', 'category', 'description', 'amount'], rows: () => db.expenses.map(e => [e.id, e.date, e.category, e.description, e.amount]) },
+    batches: { label: 'Batch & Expiry', cols: ['id', 'sku', 'product', 'batch_no', 'expiry_date', 'qty'], rows: () => db.batches.map(b => [b.id, (P(b.product_id) || {}).sku, (P(b.product_id) || {}).name, b.batch_no, b.expiry_date, b.qty]) },
+    po: { label: 'Purchase Orders', cols: ['id', 'po_no', 'date', 'supplier', 'expected', 'status'], rows: () => db.po.map(p => [p.id, p.po_no, p.date, (S(p.supplier_id) || {}).name, p.expected, p.status]) },
+    so: { label: 'Sales Orders', cols: ['id', 'so_no', 'date', 'customer', 'delivery', 'status'], rows: () => db.so.map(s => [s.id, s.so_no, s.date, (C(s.customer_id) || {}).name, s.delivery, s.status]) },
+  };
+  const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  function exportData(entity, fmt) {
+    const e = EXP[entity]; if (!e) throw new Error('Unknown export type.');
+    const rows = e.rows(), stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/^(\d{8})(\d{4})/, '$1_$2');
+    const base = 'okv_' + entity + '_' + stamp;
+    if (fmt === 'csv') {
+      const q = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+      return { filename: base + '.csv', mime: 'text/csv', content: '\uFEFF' + [e.cols, ...rows].map(r => r.map(q).join(',')).join('\r\n') };
+    }
+    if (fmt === 'json') return { filename: base + '.json', mime: 'application/json', content: JSON.stringify(rows.map(r => Object.fromEntries(e.cols.map((c, i) => [c, r[i]]))), null, 2) };
+    if (fmt === 'xls') {
+      const cell = v => typeof v === 'number' ? '<Cell><Data ss:Type="Number">' + v + '</Data></Cell>' : '<Cell><Data ss:Type="String">' + esc(v) + '</Data></Cell>';
+      const body = [e.cols, ...rows].map((r, i) => '<Row>' + r.map(v => i === 0 ? '<Cell><Data ss:Type="String">' + esc(v) + '</Data></Cell>' : cell(v)).join('') + '</Row>').join('');
+      return { filename: base + '.xls', mime: 'application/vnd.ms-excel', content: '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="' + esc(e.label).slice(0, 31) + '"><Table>' + body + '</Table></Worksheet></Workbook>' };
+    }
+    if (fmt === 'pdf') {
+      const th = e.cols.map(c => '<th>' + esc(c) + '</th>').join('');
+      const tb = rows.map(r => '<tr>' + r.map(v => '<td>' + esc(v) + '</td>').join('') + '</tr>').join('');
+      return { filename: base + '.html', mime: 'text/html', content: '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + esc(e.label) + '</title><style>body{font-family:Arial,sans-serif;font-size:11px;margin:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:4px 6px;text-align:left}th{background:#2B2620;color:#fff}@media print{button{display:none}}</style></head><body><h1>' + esc(e.label) + '</h1><table><tr>' + th + '</tr>' + tb + '</table><p><button onclick="window.print()">Print / Save as PDF</button></p></body></html>' };
+    }
+    throw new Error('Unknown format. Use csv, json, xls or pdf.');
+  }
+
+  /* ---------- the router: one entry for every api(path, body) the app makes ---------- */
+  function need(u) { if (!u) throw new Error('Please log in.'); return u; }
+  function handle(base, q, b, isPost) {
+    const need1 = () => need(CURRENT);
+    const crud = (list, make, label) => {
+      if (!isPost) return null;
+      if (!String(b.name || '').trim()) throw new Error(label + ' name is required.');
+      if (b.id) { const row = list.find(x => x.id === Number(b.id)); Object.assign(row, { name: b.name.trim(), phone: b.phone || '', email: b.email || '', address: b.address || '' }); }
+      else list.push({ id: nid(), name: b.name.trim(), phone: b.phone || '', email: b.email || '', address: b.address || '', created_at: nowIso(), deleted: 0 });
+      return { ok: 1 };
+    };
+    switch (base) {
+      case 'login': {
+        const u = db.users.find(x => x.username === String(b.username || '').trim());
+        if (!u || u.password !== b.password) throw new Error('Incorrect username or password.');
+        if (u.status !== 'Active') throw new Error('This account has been suspended. Contact your Admin.');
+        CURRENT = u; return { ok: 1, token: 'demo-' + u.username, user: publicUser(u) };
+      }
+      case 'logout': CURRENT = null; return { ok: 1 };
+      case 'whoami': return { ok: 1, user: publicUser(need1()) };
+      case 'change_password': { const u = need1(); if (b.oldPassword !== u.password) throw new Error('Current password is incorrect.'); if (String(b.newPassword || '').length < 4) throw new Error('New password must be at least 4 characters.'); u.password = b.newPassword; return { ok: 1 }; }
+      case 'settings': if (isPost) { Object.keys(b).forEach(k => { if (k !== 'token') db.settings[k] = String(b[k]); }); return { ok: 1 }; } return { ok: 1, settings: db.settings };
+      case 'license': return { ok: 1, status: db.license.active ? 'Active' : 'Trial', active: db.license.active, expired: false, trialDays: 12, daysRemaining: 12, expiresAt: ahead(12) + 'T00:00:00', onceOffPrice: 120000 };
+      case 'license/activate': throw new Error('Activation is part of the full version.');
+      case 'server/status': return { ok: 1, status: { running: true, pid: 0, port: 8080, dataDir: 'Demo (kept in this browser)', autostartSupported: true, autostart: false } };
+      case 'server/autostart': throw new Error('Starting at sign-in is part of the full version.');
+      case 'server/stop': throw new Error('The demo server cannot be stopped.');
+      case 'backup': return { ok: 1, dbFile: 'okv_ims.db (demo, kept in this browser)', sizeBytes: JSON.stringify(db).length };
+      case 'users': {
+        if (!isPost) return { ok: 1, users: db.users.map(publicUser) };
+        if (!b.username || !b.password) throw new Error('Username and password are required.');
+        if (db.users.some(u => u.username === b.username)) throw new Error('That username is already taken.');
+        db.users.push({ id: nid(), username: b.username, password: b.password, accountType: 'User', roles: b.roles || [], status: 'Active', fullName: b.fullName || '' });
+        return { ok: 1 };
+      }
+      case 'users/roles': U(b.userId).roles = b.roles || []; return { ok: 1 };
+      case 'users/password': if (String(b.newPassword || '').length < 4) throw new Error('Password must be at least 4 characters.'); U(b.userId).password = b.newPassword; return { ok: 1 };
+      case 'users/status': U(b.userId).status = b.status; return { ok: 1 };
+      case 'users/delete': db.users = db.users.filter(u => u.id !== Number(b.userId) || u.accountType === 'Admin'); return { ok: 1 };
+      case 'products': {
+        if (!isPost) return { ok: 1, products: live(db.products).sort((a, b2) => a.name.localeCompare(b2.name)).map(prodView) };
+        if (!String(b.name || '').trim()) throw new Error('Product name is required.');
+        const sku = String(b.sku || '').trim() || null;
+        if (sku) { const other = live(db.products).find(p => p.sku === sku && p.id !== Number(b.id || 0)); if (other) throw new Error('The barcode/SKU "' + sku + '" is already used by "' + other.name + '". Each product needs a different one.'); }
+        if ('image' in b && b.image && !/^data:image\/(jpeg|png|webp|gif);base64,/.test(b.image)) throw new Error('Product photo must be a JPEG, PNG, WebP or GIF image.');
+        const cost = num(b.cost), price = num(b.price), reorder = num(b.reorderLevel);
+        if (b.id) {
+          const p = P(b.id); Object.assign(p, { sku, name: b.name.trim(), category: b.category || '', unit: b.unit || 'pcs', cost, price, reorder_level: reorder, updated_at: nowIso() });
+          if ('image' in b) p.photo = b.image || '';
+        } else {
+          const p = addProduct(sku, b.name.trim(), b.category || '', b.unit || 'pcs', cost, price, reorder); p.photo = b.image || '';
+        }
+        return { ok: 1 };
+      }
+      case 'products/delete': P(b.id).deleted = 1; return { ok: 1 };
+      case 'categories': if (isPost) { const n = String(b.name || '').trim(); if (!n) throw new Error('Category name is required.'); if (!db.categories.includes(n)) db.categories.push(n); return { ok: 1 }; } return { ok: 1, categories: db.categories.slice().sort() };
+      case 'categories/delete': db.categories = db.categories.filter(c => c !== b.name); return { ok: 1 };
+      case 'suppliers': if (!isPost) return { ok: 1, suppliers: live(db.suppliers).sort((a, c) => a.name.localeCompare(c.name)) }; return crud(db.suppliers, null, 'Supplier');
+      case 'suppliers/delete': S(b.id).deleted = 1; return { ok: 1 };
+      case 'customers': if (!isPost) return { ok: 1, customers: live(db.customers).sort((a, c) => a.name.localeCompare(c.name)) }; return crud(db.customers, null, 'Customer');
+      case 'customers/delete': C(b.id).deleted = 1; return { ok: 1 };
+      case 'inventory': return { ok: 1, inventory: live(db.products).map(p => { const st = stockOf(p.id); return { ...prodView(p), stock: st, stockValue: st * p.cost, lowStock: st <= (p.reorder_level || 0) }; }) };
+      case 'reorder': return { ok: 1, reorder: live(db.products).map(p => ({ ...prodView(p), stock: stockOf(p.id) })).filter(p => p.stock <= (p.reorder_level || 0)) };
+      case 'stockin': {
+        if (!isPost) return { ok: 1, stockIn: db.stockin.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id).map(x => ({ ...x, product_name: (P(x.product_id) || {}).name, supplier_name: (S(x.supplier_id) || {}).name })) };
+        const qty = num(b.qty); if (qty <= 0) throw new Error('Quantity must be greater than zero.');
+        if (!P(b.productId)) throw new Error('Choose a product.');
+        stockIn(Number(b.productId), qty, num(b.unitCost), b.date || today(), b.grn || '', b.supplierId ? Number(b.supplierId) : null); return { ok: 1 };
+      }
+      case 'stockin/delete': db.stockin = db.stockin.filter(x => x.id !== Number(b.id)); return { ok: 1 };
+      case 'stockout': {
+        if (!isPost) return { ok: 1, stockOut: db.stockout.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id).map(x => ({ ...x, product_name: (P(x.product_id) || {}).name, customer_name: (C(x.customer_id) || {}).name })) };
+        const qty = num(b.qty); if (qty <= 0) throw new Error('Quantity must be greater than zero.');
+        const st = stockOf(Number(b.productId)); if (qty > st) throw new Error('Not enough stock — only ' + st + ' available.');
+        stockOut(Number(b.productId), qty, num(b.price), b.date || today(), b.ref || '', b.customerId ? Number(b.customerId) : null); return { ok: 1 };
+      }
+      case 'stockout/delete': db.stockout = db.stockout.filter(x => x.id !== Number(b.id)); return { ok: 1 };
+      case 'batches': {
+        if (!isPost) return { ok: 1, batches: db.batches.slice().sort((a, c) => String(a.expiry_date || '9').localeCompare(String(c.expiry_date || '9'))).map(x => ({ ...x, product_name: (P(x.product_id) || {}).name })) };
+        db.batches.push({ id: nid(), product_id: Number(b.productId), batch_no: b.batchNo || '', expiry_date: b.expiryDate || null, qty: num(b.qty), created_at: nowIso() }); return { ok: 1 };
+      }
+      case 'batches/delete': db.batches = db.batches.filter(x => x.id !== Number(b.id)); return { ok: 1 };
+      case 'po': {
+        if (!isPost) return { ok: 1, po: db.po.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id).map(p => ({ ...p, supplier_name: (S(p.supplier_id) || {}).name, items: p.items.map(i => ({ ...i, product_name: (P(i.product_id) || {}).name })) })) };
+        if (!(b.items || []).length) throw new Error('A purchase order needs at least one item.');
+        const id = nid(); db.po.push({ id, po_no: 'PO-' + String(id).padStart(6, '0'), date: today(), supplier_id: b.supplierId ? Number(b.supplierId) : null, expected: b.expected || '', status: 'Pending', items: b.items.map(i => ({ product_id: Number(i.productId), qty: num(i.qty), cost: num(i.cost), total: num(i.qty) * num(i.cost) })) });
+        return { ok: 1, poNo: 'PO-' + String(id).padStart(6, '0') };
+      }
+      case 'po/status': {
+        const p = db.po.find(x => x.id === Number(b.id)); p.status = b.status;
+        if (b.status === 'Fulfilled') p.items.forEach(i => stockIn(i.product_id, i.qty, i.cost, today(), p.po_no, p.supplier_id)); return { ok: 1 };
+      }
+      case 'po/delete': { const p = db.po.find(x => x.id === Number(b.id)); if (p.status === 'Fulfilled') throw new Error('This PO is already fulfilled. Use Adjustments to correct stock instead.'); db.po = db.po.filter(x => x.id !== p.id); return { ok: 1 }; }
+      case 'so': {
+        if (!isPost) return { ok: 1, so: db.so.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id).map(s => ({ ...s, customer_name: (C(s.customer_id) || {}).name, items: s.items.map(i => ({ ...i, product_name: (P(i.product_id) || {}).name })) })) };
+        if (!(b.items || []).length) throw new Error('A sales order needs at least one item.');
+        const id = nid(); db.so.push({ id, so_no: 'SO-' + String(id).padStart(6, '0'), date: today(), customer_id: b.customerId ? Number(b.customerId) : null, delivery: b.delivery || '', status: 'Pending', items: b.items.map(i => ({ product_id: Number(i.productId), qty: num(i.qty), price: num(i.price), total: num(i.qty) * num(i.price) })) });
+        return { ok: 1, soNo: 'SO-' + String(id).padStart(6, '0') };
+      }
+      case 'so/status': {
+        const s = db.so.find(x => x.id === Number(b.id)); s.status = b.status;
+        if (b.status === 'Fulfilled') s.items.forEach(i => { if (stockOf(i.product_id) < i.qty) throw new Error('Not enough stock to fulfil this order.'); stockOut(i.product_id, i.qty, i.price, today(), s.so_no, s.customer_id); }); return { ok: 1 };
+      }
+      case 'so/delete': { const s = db.so.find(x => x.id === Number(b.id)); if (s.status === 'Fulfilled') throw new Error('This SO is already fulfilled. Use Adjustments to correct stock instead.'); db.so = db.so.filter(x => x.id !== s.id); return { ok: 1 }; }
+      case 'pos/sale': {
+        const items = b.items || []; if (!items.length) throw new Error('Cart is empty.');
+        const need2 = {}; items.forEach(i => need2[i.productId] = (need2[i.productId] || 0) + num(i.qty));
+        Object.keys(need2).forEach(pid => { const st = stockOf(Number(pid)); if (need2[pid] > st) throw new Error('Not enough stock for ' + (P(pid) || {}).name + ' — only ' + st + ' left.'); });
+        const s = posSale(items.map(i => ({ pid: Number(i.productId), qty: num(i.qty), price: num(i.price) })), today(), b.customerId ? Number(b.customerId) : null, (CURRENT || {}).id, b.paymentMethod || 'Cash');
+        const disc = num(b.discount, 0); s.discount = disc; s.total = Math.max(0, s.subtotal - disc);
+        return { ok: 1, invoice: s.invoice, total: s.total };
+      }
+      case 'pos/sales': return { ok: 1, sales: db.pos.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id).map(s => ({ ...s, customer_name: (C(s.customer_id) || { name: 'Walk-in' }).name, cashier_name: (U(s.cashier_id) || {}).username })) };
+      case 'pos/sale/void': db.pos = db.pos.filter(s => s.id !== Number(b.id)); return { ok: 1 };
+      case 'adjustments': {
+        if (!isPost) return { ok: 1, adjustments: db.adjustments.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id).map(x => ({ ...x, product_name: (P(x.product_id) || {}).name })) };
+        const qty = num(b.qty); if (!qty) throw new Error('Adjustment quantity cannot be zero.');
+        db.adjustments.push({ id: nid(), date: b.date || today(), product_id: Number(b.productId), qty, type: b.type || 'Other', reason: b.reason || '', created_at: nowIso() }); return { ok: 1 };
+      }
+      case 'adjustments/delete': db.adjustments = db.adjustments.filter(x => x.id !== Number(b.id)); return { ok: 1 };
+      case 'expenses': {
+        if (!isPost) return { ok: 1, expenses: db.expenses.slice().sort((a, c) => c.date.localeCompare(a.date) || c.id - a.id) };
+        const amount = num(b.amount); if (amount <= 0) throw new Error('Amount must be greater than zero.');
+        db.expenses.push({ id: nid(), date: b.date || today(), category: b.category || 'Other', description: b.description || '', amount, created_at: nowIso() }); return { ok: 1 };
+      }
+      case 'expenses/delete': db.expenses = db.expenses.filter(x => x.id !== Number(b.id)); return { ok: 1 };
+      case 'dashboard': return dashboard();
+      case 'dashboard/trend': return trend();
+      case 'pnl': return pnl(q.get('period') || 'monthly');
+      case 'reports': return reports(q.get('period') || 'daily');
+      case 'messages': {
+        if (!isPost) return { ok: 1, messages: db.messages.slice().sort((a, c) => c.id - a.id).slice(0, 200) };
+        db.messages.push({ id: nid(), audience: b.audience || '', recipient_name: b.recipientName || '', msg_type: b.msgType || 'Announcement', subject: b.subject || '', body: b.body || '', sent_by: (CURRENT || {}).id, created_at: nowIso() }); return { ok: 1 };
+      }
+      case 'chat': {
+        const me = need1().id;
+        if (!isPost) {
+          const other = Number(q.get('with') || 0);
+          const msgs = db.chat.filter(m => other === 0 ? m.to_user === 0 : ((m.from_user === me && m.to_user === other) || (m.from_user === other && m.to_user === me)))
+            .map(m => ({ ...m, from_name: (U(m.from_user) || {}).username }));
+          return { ok: 1, messages: msgs };
+        }
+        const text = String(b.message || '').trim(); if (!text) throw new Error('Message cannot be empty.');
+        db.chat.push({ id: nid(), from_user: me, to_user: Number(b.toUserId || 0), message: text, created_at: nowIso() }); return { ok: 1 };
+      }
+      case 'csv/spec': { const out = {}; Object.keys(DEMO_SPECS).forEach(k => out[k] = { label: DEMO_SPECS[k].label, columns: DEMO_SPECS[k].columns }); return { ok: 1, specs: out }; }
+      case 'csv/template': {
+        const s = DEMO_SPECS[q.get('entity') || '']; if (!s) throw new Error('Unknown import type.');
+        const enc = v => /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+        return { ok: 1, filename: 'okv_template_' + q.get('entity') + '.csv', csv: [s.columns.map(c => c.name), ...s.example].map(r => r.map(enc).join(',')).join('\r\n') + '\r\n' };
+      }
+      case 'csv/import': need1(); return importCsv(b.entity, String(b.csv || ''), !!b.dryRun);
+      case 'export': need1(); return exportData(q.get('entity') || '', q.get('format') || 'csv');
+      default: throw new Error('This page is not part of the demo.');
+    }
+  }
+  function route(path, body) {
+    const i = path.indexOf('?');
+    const base = i >= 0 ? path.slice(0, i) : path;
+    const q = new URLSearchParams(i >= 0 ? path.slice(i + 1) : '');
+    try { return Promise.resolve(handle(base, q, body || {}, body !== undefined)); }
+    catch (e) { return Promise.reject(e); }
+  }
+  function snapshot() { return JSON.parse(JSON.stringify(db)); }
+  return { route, photoOf, snapshot, login(u, p) { return route('login', { username: u, password: p }); } };
+})();
+
+/* ---- connect the app's own screens to the engine ---- */
+async function api(path, body) { return DEMO.route(path, body); }
+function productPhotoUrl(p) { return DEMO.photoOf(p.id); }
+function render_backup() {
+  const el = document.getElementById('page-backup');
+  el.innerHTML = '<div class="page-title">Backup</div>' +
+    '<div class="page-sub">In the full product, this file is the whole business database.</div>' +
+    '<div class="card"><p>This demo keeps its data in this browser tab. Download a copy to see what a backup contains.</p>' +
+    '<button class="btn btn-gold btn-sm" onclick="downloadText(\'okv_ims_demo_backup.json\',\'application/json\',JSON.stringify(DEMO.snapshot(),null,2))">Download backup</button></div>';
+}
+/* open straight into the app, signed in as the Admin */
+/* keep the page clear of the demo banner, whatever its height on this screen */
+function fitDemoBanner() {
+  const bar = document.getElementById('demoBanner'); if (!bar) return;
+  const h = bar.offsetHeight + 'px';
+  document.body.style.paddingTop = h;
+  const side = document.getElementById('sidebar');
+  if (side && window.innerWidth > 800) { side.style.top = '0px'; side.style.height = 'calc(100vh - ' + h + ')'; }
+}
+window.addEventListener('resize', fitDemoBanner);
+(function startDemo() {
+  fitDemoBanner();
+  DEMO.login('admin', 'admin123').then(function (r) {
+    TOKEN = r.token;
+    boot();
+  });
+})();
+
+
+/* ---- demo guard: fields are disabled, and any attempt to save shows the call to action ---- */
+const CTA_LOGIN_IDS = ['loginUser', 'loginPass'];
+function lockFields(){
+  document.querySelectorAll('#app input, #app select, #app textarea').forEach(function (el) {
+    if (!el.disabled) el.disabled = true;
+    if (el.title !== 'Available in the full version') el.title = 'Available in the full version';
+  });
+}
+function showCta(){ var p = document.getElementById('ctaPanel'); if (p) p.classList.add('show'); }
+function closeCta(){ var p = document.getElementById('ctaPanel'); if (p) p.classList.remove('show'); }
+function fitDemoBanner(){
+  var bar = document.getElementById('demoBanner'); if (!bar) return;
+  document.documentElement.style.setProperty('--demo-top', bar.offsetHeight + 'px');
+}
+window.addEventListener('resize', fitDemoBanner);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCta(); });
+/* any button that would save, add, sell, delete or send shows the call to action at the start of the click */
+var WRITE_WORDS = /(save|add|complete sale|record|update|delete|void|import|send|submit|mark|create|approve|reset|suspend|reactivate|generate|fulfil|post|cancel|change|set|confirm|activate|stop|upload|apply)/i;
+var ALLOWED_WORDS = /^(import \/ export|export|download|print|show|close|cancel modal|keep exploring)/i;
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest && e.target.closest('#app button, #app .btn, #app a.btn');
+  if (!btn) return;
+  var label = ((btn.getAttribute('title') || '') + ' ' + (btn.textContent || '')).replace(/\s+/g, ' ').trim();
+  if (!label || ALLOWED_WORDS.test(label)) return;
+  if (WRITE_WORDS.test(label)) { e.preventDefault(); e.stopImmediatePropagation(); showCta(); }
+}, true);
+
+document.addEventListener('DOMContentLoaded', function () {
+  var app = document.getElementById('app');
+  if (app) new MutationObserver(lockFields).observe(app, { childList: true, subtree: true });
+  lockFields(); fitDemoBanner();
+});
+/* every write goes to the call to action instead of the engine */
+var __demoApi = api;
+api = async function (path, body) {
+  var base = String(path).split('?')[0];
+  var readonly = body === undefined && base !== 'server/stop' && base !== 'server/autostart';
+  if (base === 'login' || base === 'logout') return __demoApi(path, body);
+  if (!readonly) { showCta(); throw new Error('This is a live demo. Get your copy to save your own data.'); }
+  return __demoApi(path, body);
+};
+
+</script>
+</body>
+</html>
